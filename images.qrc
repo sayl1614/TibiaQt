@@ -1,0 +1,123 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/characters/demon/east/1.png</file>
+        <file>images/characters/demon/east/2.png</file>
+        <file>images/characters/demon/east/3.png</file>
+        <file>images/characters/demon/east/4.png</file>
+        <file>images/characters/demon/east/5.png</file>
+        <file>images/characters/demon/east/6.png</file>
+        <file>images/characters/demon/east/7.png</file>
+        <file>images/characters/demon/east/8.png</file>
+        <file>images/characters/demon/east/9.png</file>
+        <file>images/characters/demon/north/1.png</file>
+        <file>images/characters/demon/north/2.png</file>
+        <file>images/characters/demon/north/3.png</file>
+        <file>images/characters/demon/north/4.png</file>
+        <file>images/characters/demon/north/5.png</file>
+        <file>images/characters/demon/north/6.png</file>
+        <file>images/characters/demon/north/7.png</file>
+        <file>images/characters/demon/north/8.png</file>
+        <file>images/characters/demon/north/9.png</file>
+        <file>images/characters/demon/south/1.png</file>
+        <file>images/characters/demon/south/2.png</file>
+        <file>images/characters/demon/south/3.png</file>
+        <file>images/characters/demon/south/4.png</file>
+        <file>images/characters/demon/south/5.png</file>
+        <file>images/characters/demon/south/6.png</file>
+        <file>images/characters/demon/south/7.png</file>
+        <file>images/characters/demon/south/8.png</file>
+        <file>images/characters/demon/south/9.png</file>
+        <file>images/characters/demon/west/1.png</file>
+        <file>images/characters/demon/west/2.png</file>
+        <file>images/characters/demon/west/3.png</file>
+        <file>images/characters/demon/west/4.png</file>
+        <file>images/characters/demon/west/5.png</file>
+        <file>images/characters/demon/west/6.png</file>
+        <file>images/characters/demon/west/7.png</file>
+        <file>images/characters/demon/west/8.png</file>
+        <file>images/characters/demon/west/9.png</file>
+        <file>images/characters/fire elemental/east1.png</file>
+        <file>images/characters/fire elemental/east2.png</file>
+        <file>images/characters/fire elemental/north1.png</file>
+        <file>images/characters/fire elemental/north2.png</file>
+        <file>images/characters/fire elemental/south1.png</file>
+        <file>images/characters/fire elemental/south2.png</file>
+        <file>images/characters/fire elemental/west1.png</file>
+        <file>images/characters/fire elemental/west2.png</file>
+        <file>images/characters/the handmaiden/1.png</file>
+        <file>images/characters/the handmaiden/10.png</file>
+        <file>images/characters/the handmaiden/11.png</file>
+        <file>images/characters/the handmaiden/12.png</file>
+        <file>images/characters/the handmaiden/13.png</file>
+        <file>images/characters/the handmaiden/14.png</file>
+        <file>images/characters/the handmaiden/15.png</file>
+        <file>images/characters/the handmaiden/16.png</file>
+        <file>images/characters/the handmaiden/17.png</file>
+        <file>images/characters/the handmaiden/18.png</file>
+        <file>images/characters/the handmaiden/19.png</file>
+        <file>images/characters/the handmaiden/2.png</file>
+        <file>images/characters/the handmaiden/20.png</file>
+        <file>images/characters/the handmaiden/21.png</file>
+        <file>images/characters/the handmaiden/22.png</file>
+        <file>images/characters/the handmaiden/23.png</file>
+        <file>images/characters/the handmaiden/24.png</file>
+        <file>images/characters/the handmaiden/25.png</file>
+        <file>images/characters/the handmaiden/26.png</file>
+        <file>images/characters/the handmaiden/27.png</file>
+        <file>images/characters/the handmaiden/28.png</file>
+        <file>images/characters/the handmaiden/29.png</file>
+        <file>images/characters/the handmaiden/3.png</file>
+        <file>images/characters/the handmaiden/30.png</file>
+        <file>images/characters/the handmaiden/31.png</file>
+        <file>images/characters/the handmaiden/32.png</file>
+        <file>images/characters/the handmaiden/33.png</file>
+        <file>images/characters/the handmaiden/34.png</file>
+        <file>images/characters/the handmaiden/35.png</file>
+        <file>images/characters/the handmaiden/36.png</file>
+        <file>images/characters/the handmaiden/37.png</file>
+        <file>images/characters/the handmaiden/38.png</file>
+        <file>images/characters/the handmaiden/39.png</file>
+        <file>images/characters/the handmaiden/4.png</file>
+        <file>images/characters/the handmaiden/40.png</file>
+        <file>images/characters/the handmaiden/41.png</file>
+        <file>images/characters/the handmaiden/42.png</file>
+        <file>images/characters/the handmaiden/43.png</file>
+        <file>images/characters/the handmaiden/44.png</file>
+        <file>images/characters/the handmaiden/45.png</file>
+        <file>images/characters/the handmaiden/46.png</file>
+        <file>images/characters/the handmaiden/47.png</file>
+        <file>images/characters/the handmaiden/48.png</file>
+        <file>images/characters/the handmaiden/49.png</file>
+        <file>images/characters/the handmaiden/5.png</file>
+        <file>images/characters/the handmaiden/50.png</file>
+        <file>images/characters/the handmaiden/51.png</file>
+        <file>images/characters/the handmaiden/52.png</file>
+        <file>images/characters/the handmaiden/53.png</file>
+        <file>images/characters/the handmaiden/54.png</file>
+        <file>images/characters/the handmaiden/55.png</file>
+        <file>images/characters/the handmaiden/56.png</file>
+        <file>images/characters/the handmaiden/57.png</file>
+        <file>images/characters/the handmaiden/58.png</file>
+        <file>images/characters/the handmaiden/59.png</file>
+        <file>images/characters/the handmaiden/6.png</file>
+        <file>images/characters/the handmaiden/60.png</file>
+        <file>images/characters/the handmaiden/61.png</file>
+        <file>images/characters/the handmaiden/62.png</file>
+        <file>images/characters/the handmaiden/63.png</file>
+        <file>images/characters/the handmaiden/64.png</file>
+        <file>images/characters/the handmaiden/65.png</file>
+        <file>images/characters/the handmaiden/66.png</file>
+        <file>images/characters/the handmaiden/67.png</file>
+        <file>images/characters/the handmaiden/68.png</file>
+        <file>images/characters/the handmaiden/69.png</file>
+        <file>images/characters/the handmaiden/7.png</file>
+        <file>images/characters/the handmaiden/8.png</file>
+        <file>images/characters/the handmaiden/9.png</file>
+        <file>images/tiles/1.png</file>
+        <file>images/tiles/green.png</file>
+        <file>images/tiles/red.png</file>
+        <file>images/tiles/2.png</file>
+        <file>images/tiles/black.png</file>
+        <file>images/tiles/yellow.png</file>
+    </qresource>
+</RCC>
