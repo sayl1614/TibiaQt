@@ -35,53 +35,28 @@ Character::Character(QString character, MainWindow *parent, int speed) :
 
 // rerun when level up?
 void Character::setAnimationAttributes(){
-    _orgCharacterSize = _player->width();
-    _drawCharacterSize = _parent->dimentions.getMapZoom() * _orgCharacterSize;
+    _drawCharacterSize = _parent->dimentions.getMapZoom() * _movementImages[0]->getWidth();
     _drawTileSize = _orgTileSize * _parent->dimentions.getMapZoom();
     _drawOffset = _drawCharacterSize - _drawTileSize;
-}
-
-
-void Character::animateNextMovement(){
-    if (movement.getAnimationIndex() >= movement._move[(int)_facingDir].size()){
-        int newPos = movement._move[(int)_facingDir].size() > 2 ? 1 : 0;
-        movement.setAnimationIndex(newPos);
-    }
-    _player = &movement._move[(int)_facingDir][movement.getAnimationIndex()];
 }
 
 void Character::animationUpdate(){
     if ((isMoving() || hasPassiveAnimation()) &&
             (_movementAnimationTimer.elapsed() > movement.getMovementAnimationInterval())){
         movement++;
-        animateNextMovement();
         _movementAnimationTimer.restart();
     }
 }
 
-void Character::directionUpdate(){
-    _player = &movement._move[(int)_facingDir][movement.getAnimationIndex()];
-}
-
 void Character::reloadCharacter(QString newChar){
     for (int i = 0; i < _movementImages.size(); i++) {
-        _movementImages[_movementImages.size()]->reloadImage(newChar);
+        _movementImages[i]->reloadImage(newChar);
     }
-
-    /*
-    while (movement._move[(int)FacingDirection::north].size())
-        movement._move[(int)FacingDirection::north].pop_back();
-    while (movement._move[(int)FacingDirection::west].size())
-        movement._move[(int)FacingDirection::west].pop_back();
-    while (movement._move[(int)FacingDirection::south].size())
-        movement._move[(int)FacingDirection::south].pop_back();
-    while (movement._move[(int)FacingDirection::east].size())
-        movement._move[(int)FacingDirection::east].pop_back();
-    loadCharacterImages(newChar);
-    */
 }
 
 void Character::stopMoving(){
+    _movementImages[(int)_facingDir]->stop();
+
 
     _parent->addCharacter(movement.getEndPos(), this);
     _parent->removeCharacter(movement.getStartPos(), this);
@@ -91,7 +66,6 @@ void Character::stopMoving(){
 
     movement.changeOffset(0, 0);
     movement.setAnimationIndex(0);
-    directionUpdate();
     _state = State::none;
 }
 
@@ -315,7 +289,6 @@ void Character::drawBox_Red(int x, int y, QPainter &painter, int avvika){
 
 inline void Character::setFacingDirection(FacingDirection dir){
     _facingDir = dir;
-    _player = &movement._move[(int)getFacingDirection()][movement.getAnimationIndex()];
 }
 
 void Character::setMovementAnimationInterval(int msPerSquare){

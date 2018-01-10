@@ -6,7 +6,7 @@ Image::Image(QString image){
     loadImage(image);
 }
 
-void Image::draw(int x, int y, QPainter &painter, double zoom){
+void Image::draw(int x, int y, double zoom, QPainter &painter){
     zoom = zoom * _imageSize;
     painter.drawPixmap(x, y, zoom, zoom, _image[_currentImage]);
 }
@@ -20,16 +20,20 @@ void Image::loadImage(QString path){
     _imageSize = _image.front().width();
 }
 
+void Image::play(){
+    _playInterval->start(this->_animationInterval);
+}
+
+void Image::play(int interval){
+    _playInterval->start(interval);
+}
+
 void Image::stop(){
     _playInterval->stop();
 }
 
 bool Image::isPlaying(){
     return _playInterval->isActive();
-}
-
-void Image::play(int interval){
-    _playInterval->start(interval);
 }
 
 void Image::reset(){
@@ -39,12 +43,16 @@ void Image::reset(){
 void Image::reloadImage(QString path){
     while (_image.size())
         _image.pop_back();
-    loadImage(image);
+    loadImage(path);
+}
+
+int Image::getWidth(){
+    return _image[0].width();
 }
 
 void Image::nextImage(){
     if (++_currentImage >= _image.size())
-        _currentImage = 1;
+        _currentImage = _image.size() > 2 ? 1 : 0;
 }
 
 Image::~Image(){

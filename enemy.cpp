@@ -14,9 +14,10 @@ void Enemy::draw(int x, int y, QPainter &painter){
     setAnimationAttributes();
     if (_hasBox_Black)
         drawBox_Black(x - _drawOffset + movement.getOffsetX(), y - _drawOffset + movement.getOffsetY(), painter, 0);
+
     painter.drawPixmap( x - _drawOffset + movement.getOffsetX(),
                         y - _drawOffset + movement.getOffsetY(),
-                        _drawCharacterSize, _drawCharacterSize, *_player);
+                        _drawCharacterSize, _drawCharacterSize, this->_movementImages[movement._animationIndex]);
 }
 
 void Enemy::attack(Character *enemy){

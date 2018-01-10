@@ -43,8 +43,6 @@ public:
     virtual void attack(Character *enemy) = 0;
 
 
-
-    virtual void animateNextMovement();
     virtual bool hasPassiveAnimation(){return _hasPassiveAnimation;}
     virtual void animationUpdate();
     void setAnimationAttributes();
@@ -184,14 +182,12 @@ protected:
     // Combat end
 
     // Attributes
-    QPixmap *_player;
     int _moveSpeed;
     int _hp;
     int _ap;
     int _critChance;
 
 
-    virtual void directionUpdate();
     QQueue<FacingDirection>_movingDirection;
     FacingDirection _facingDir;
     State _state {State::none};

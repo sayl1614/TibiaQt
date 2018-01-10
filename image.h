@@ -14,14 +14,16 @@ class Image : public QObject{
 public:
     Image(QString item);
 
-    void draw(int x, int y, QPainter &painter, double zoom);
+    void draw(int x, int y, double zoom, QPainter &painter);
 
+    void play();
     void play(int interval);
     void stop();
     bool isPlaying();
     void reset();
     void reloadImage(QString path);
 
+    int getWidth();
 
     ~Image();
     void loadImage(QString item);
@@ -31,6 +33,8 @@ private:
 
     QTimer *_playInterval;
     int _currentImage = 0;
+
+    int _animationInterval;
 
 
 private slots:

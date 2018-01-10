@@ -188,7 +188,7 @@ void MainWindow::paintEvent(QPaintEvent *e){
 
     _theMap->drawMap(painter);
     //_pathfinder->draw(painter);
-    myImage->draw(100, 100, painter, dimentions.getMapZoom());
+    myImage->draw(100, 100, dimentions.getMapZoom(),  painter);
 }
 
 
