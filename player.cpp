@@ -19,5 +19,9 @@ void Player::draw(int x, int y, QPainter &painter){
                         _drawCharacterSize, _drawCharacterSize, *_player);
 }
 
+void Player::meleeAttack(int speed){
+
+}
+
 
 

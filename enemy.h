@@ -2,6 +2,7 @@
 #define ENEMY_H
 
 #include "character.h"
+#include "enums.h"
 
 class Enemy : public Character{
 public:

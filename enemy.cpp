@@ -35,7 +35,7 @@ void Enemy::meleeAttack(int speed){
     // Do an attack inbetween
 
     // Do an attack inbetween
-    bool moveNext = rand() % 100 < 25; // 25% chance to move
+    bool moveNext = rand() % 100 < 33; // 25% chance to move
 
     if (this->getPos()->x() < _enemy->getPos()->x()) { // west of target
         if (moveNext) {
@@ -149,7 +149,7 @@ void Enemy::meleeAttack(int speed){
         }
     }
     else {                                                          // ontop of target
-        moveNext = rand() % 100 < 50; // 50% chance to move
+        moveNext = rand() % 100 < 60; // 50% chance to move
         if (moveNext){
             FacingDirection direction = (FacingDirection)(rand() % 4);
             speed = move(direction);

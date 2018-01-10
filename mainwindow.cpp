@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
+    myImage = new Image(":/images/characters/demon/east");
+    myImage->play(100);
+
     dimentions.setDrawTileSize(dimentions.getOrgTileSize()* dimentions.getMapZoom());
     _player = new Player("demon", this);
     _enemy = new Enemy("demon", this);
@@ -43,6 +46,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_F:{
             _enemy->attack(_player);
+            if (myImage->isPlaying())
+                myImage->stop();
+            else
+                myImage->play(100);
             break;
         }
     case Qt::Key_Plus:
@@ -181,6 +188,7 @@ void MainWindow::paintEvent(QPaintEvent *e){
 
     _theMap->drawMap(painter);
     //_pathfinder->draw(painter);
+    myImage->draw(100, 100, painter, dimentions.getMapZoom());
 }
 
 

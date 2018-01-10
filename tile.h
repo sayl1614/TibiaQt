@@ -9,15 +9,10 @@ class Character;
 #include <QVector>
 #include <QQueue>
 
-#include <QPainter>
 
-enum class TileSpeed{
-    verySlow,
-    slow,
-    medium,
-    fast,
-    veryFast
-};
+#include "enums.h"
+
+#include <QPainter>
 
 
 class Tile{

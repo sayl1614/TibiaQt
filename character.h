@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include "image.h"
+
 #include <QString>
 #include <QPoint>
 
@@ -23,29 +25,16 @@
 
 #include <QDebug>
 
+#include "enums.h"
+
 class MainWindow;
-
-
-enum class State{
-    none,
-    moving,
-    sleeping,
-    eating
-};
-enum class FacingDirection{
-    north,
-    west,
-    south,
-    east,
-    continueToNext,
-    notFound
-};
 
 
 class Character : public QObject{
     Q_OBJECT
 public:
     Character(QString character, MainWindow *parent, int speed = 220);
+    QVector<Image*> _movementImages;
     virtual void draw(int x, int y, QPainter &painter) = 0;
 
     virtual void setState(State state){_state = state;}
@@ -61,7 +50,7 @@ public:
     void setAnimationAttributes();
 
 
-    virtual void setCharacter(QString newChar);
+    virtual void reloadCharacter(QString newChar);
 
     void drawTheMarks(QPainter &painter);
 
@@ -74,7 +63,6 @@ public:
     }
 
     struct Movement{
-        _movement() {}
 
         void changePos(int x, int y){
             setStartPos(x, y);
@@ -126,6 +114,9 @@ public:
         QVector< QVector< QPixmap>> _move;
         QQueue<QPoint>_nextSquare;
 
+        /**/
+
+        /**/
     private:
         int _framesPerSquare = 8;
         int _animationIndex;
@@ -140,6 +131,8 @@ public:
     virtual ~Character(){
         if (_parent)
             delete _parent;
+        for (int i = 0; i < _movementImages.size(); i++)
+            delete _movementImages[i];
     }
 
 
@@ -158,8 +151,10 @@ public:
     void drawBox_Black(int x, int y, QPainter &painter, int avvika);
     void drawBox_Red(int x, int y, QPainter &painter, int avvika);
     void setBox_BlackOn(int time = 1000){_hasBox_Black = true; _box_BlackTimer->start(time);}
-    virtual void meleeAttack(int speed);
-    void movementWonderAround();
+    virtual void meleeAttack(int speed) = 0;
+    void movementWanderAround();
+    bool withinMelee(QPoint start, QPoint end);
+    bool withinChasingDistance(QPoint start, QPoint end);
 protected slots:
     void moveNorth();
     void moveWest();

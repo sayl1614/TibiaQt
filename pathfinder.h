@@ -11,6 +11,9 @@
 #include <QBrush>
 #include <QVector>
 
+
+#include "enums.h"
+
 #include "worldmap.h"
 class WorldMap;
 

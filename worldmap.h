@@ -13,14 +13,13 @@
 
 #include "character.h"
 class Character;
-enum class FacingDirection;
 
 #include <QTimer>
 
 #include <QPainter>
 
-#include <QDebug>
-#include <QLabel>
+
+#include "enums.h"
 
 #include "mainwindow.h"
 

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "image.h"
+
 #include "player.h"
 #include "enemy.h"
 #include "worldmap.h"
@@ -8,6 +10,9 @@ class WorldMap;
 
 #include "pathfinder.h"
 class PathFinder;
+
+
+#include "enums.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -144,6 +149,8 @@ private:
     bool _ctrlPressed = false;
     bool _altPressed = false;
 
+
+    Image *myImage;
 
 };
 
