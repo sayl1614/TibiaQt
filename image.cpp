@@ -1,9 +1,13 @@
 #include "image.h"
 
-Image::Image(QString image){
+Image::Image(QString path){
     _playInterval = new QTimer(this);
     connect(_playInterval, SIGNAL(timeout()), this, SLOT(nextImage()));
-    loadImage(image);
+    loadImage(path);
+}
+
+void Image::init(){
+
 }
 
 void Image::draw(int x, int y, double zoom, QPainter &painter){
@@ -24,8 +28,8 @@ void Image::play(){
     _playInterval->start(this->_animationInterval);
 }
 
-void Image::play(int interval){
-    _playInterval->start(interval);
+void Image::play(int msPerSquare){
+    _playInterval->start(msPerSquare / _framesPerSquare);
 }
 
 void Image::stop(){

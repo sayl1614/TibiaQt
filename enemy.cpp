@@ -1,6 +1,6 @@
 #include "enemy.h"
 #include "mainwindow.h"
-
+/*
 Enemy::Enemy(QString character, MainWindow *parent, Character *enemy, int speed) :
     Character("demon", parent, speed){
     _enemy = enemy;
@@ -164,5 +164,5 @@ void Enemy::meleeAttack(int speed){
 bool Enemy::moveTwardsEnemy(){
 
 }
-
+*/
 

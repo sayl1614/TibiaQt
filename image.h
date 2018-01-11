@@ -12,12 +12,13 @@
 class Image : public QObject{
     Q_OBJECT
 public:
-    Image(QString item);
+    Image(QString path);
+    void init();
 
     void draw(int x, int y, double zoom, QPainter &painter);
 
     void play();
-    void play(int interval);
+    void play(int speed);
     void stop();
     bool isPlaying();
     void reset();
@@ -28,13 +29,16 @@ public:
     ~Image();
     void loadImage(QString item);
 private:
+    // This attribute is per-object sensitive
+    int _animationInterval;
+
     QVector<QPixmap> _image;
     int _imageSize;
 
     QTimer *_playInterval;
+    int _framesPerSquare = 8;
     int _currentImage = 0;
 
-    int _animationInterval;
 
 
 private slots:

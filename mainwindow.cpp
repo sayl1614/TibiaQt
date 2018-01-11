@@ -1,15 +1,15 @@
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
-    myImage = new Image(":/images/characters/demon/east");
-    myImage->play(100);
+    _theMap = new WorldMap(this);
+
+    _player = new Player("demon", this);
+    _player->move(FacingDirection::south);
 
     dimentions.setDrawTileSize(dimentions.getOrgTileSize()* dimentions.getMapZoom());
-    _player = new Player("demon", this);
-    _enemy = new Enemy("demon", this);
-    _enemy->movement.changePos(25, 25);
-    _theMap = new WorldMap(this);
-    this->_pathfinder = new PathFinder(this, _theMap);
+    //_player = new Player("demon", this);
+    //_enemy->movement.changePos(25, 25);
+    //this->_pathfinder = new PathFinder(this, _theMap);
 
 
 
@@ -17,15 +17,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     connect(this->_FPSTimer, SIGNAL(timeout()), this, SLOT(update()));
     this->_FPSTimer->start(1000/60);
     this->_keyPressElapsedTimer.start();
-    this->movement.followCharacterWithCamera(_player);
+    //this->movement.followCharacterWithCamera(_player);
 
-    _enemy->movement.changePos(7, 7);
-    _theMap->addCharacter(_enemy);
-    for (int i = 0; i < 0; i++)
-        _theMap->addCharacter(new Enemy("demon", this, _player, 50));
+    //for (int i = 0; i < 0; i++)
+        //_theMap->addCharacter(new Enemy("demon", this, _player, 50));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
+    /*
     if (!_player->isMoving()){
         switch(event->key()){
         case Qt::Key_Up:
@@ -46,11 +45,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_F:{
             _enemy->attack(_player);
-            if (myImage->isPlaying())
-                myImage->stop();
-            else
-                myImage->play(100);
-            break;
         }
     case Qt::Key_Plus:
         if (dimentions.getMapZoom() < 4.5){
@@ -80,6 +74,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
             _player->move(direction);
         break;
     }
+    */
+    switch(event->key()){
     case Qt::Key_Control:
         _ctrlPressed = true;
         break;
@@ -87,6 +83,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
         _altPressed = true;
         break;
     }
+
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event){
@@ -102,6 +99,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event){
 
 
 void MainWindow::mousePressEvent(QMouseEvent *e){
+    /*
     int x = e->x() / dimentions.getDrawTileSize();
     int y = e->y() / dimentions.getDrawTileSize();
     int xi = floor((movement.getScreenPos()->x()) + 1 -
@@ -120,6 +118,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e){
         else;
             _theMap->toggleTile(drawX, drawY);
     }
+    */
 }
 
 void MainWindow::wheelEvent(QWheelEvent *event){
@@ -128,9 +127,6 @@ void MainWindow::wheelEvent(QWheelEvent *event){
 
 int MainWindow::getSpeedPerTileForCharacter(Character *character){
     return _theMap->getSpeedPerTileForCharacter(character);
-}
-int MainWindow::getSpeedPerTileForCharacter(QPoint pos, Character *character){
-    return _theMap->getSpeedPerTileForCharacter(pos, character);
 }
 
 void MainWindow::addCharacter(Character *obj){
@@ -165,7 +161,9 @@ bool MainWindow::isWalkable(QPoint pos){
     return isWalkable(pos.x(), pos.y());
 }
 
+// tile should be testing this!
 bool MainWindow::isWalkable(int x, int y){
+    /*
     if (!_theMap->valid(x, y))
         return false;
     if (!_theMap->getTile(x, y)->isWalkable())
@@ -173,22 +171,22 @@ bool MainWindow::isWalkable(int x, int y){
     if (_theMap->getTile(x, y)->isBusy())
         return false;
     QQueue<Character*> &character = _theMap->getCharacters(x, y);
-
     for (int i = 0; i < character.size(); i++){
         if (*character[i]->getPos() == QPoint(x, y)){
             return false;
         }
     }
     return true;
+    */
 }
 
 void MainWindow::paintEvent(QPaintEvent *e){
 
     QPainter painter(this);
 
-    _theMap->drawMap(painter);
+    //_theMap->drawMap(painter);
     //_pathfinder->draw(painter);
-    myImage->draw(100, 100, dimentions.getMapZoom(),  painter);
+    _player->draw(500, 500, dimentions.getMapZoom(), painter);
 }
 
 

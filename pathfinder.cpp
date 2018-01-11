@@ -342,12 +342,12 @@ void PathFinder::draw(QPainter &painter){
 
     int indexPosY = _theMap->getIndexPos('y');
 
-    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetY(); drawYPos < 900; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
+    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->y(); drawYPos < 900; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
         if (indexPosY < 0 || indexPosY >= _theMap->getMapHeight())
             continue;
 
         int indexPosX = _theMap->getIndexPos('x');
-        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetX(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
+        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->x(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
             if (indexPosX < 0 || indexPosX >= _theMap->getMapWidth())
                 continue;
 

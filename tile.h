@@ -1,9 +1,12 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "character.h"
-class Character;
+#include <assert.h>
 
+#include "character.h"
+class WorldMap;
+
+#include <QPainter>
 #include <QPoint>
 #include <QPixmap>
 #include <QVector>
@@ -12,19 +15,18 @@ class Character;
 
 #include "enums.h"
 
-#include <QPainter>
 
 
 class Tile{
 public:
-    Tile(const QPoint &screenCenter);
+    Tile();
+    void init();
 
     void setTileImg(QPixmap *img);
     void addCharacter(Character *newChar);
     bool isWalkable();
     void setWalkable(bool value);
-    bool isBusy(){return _isBusy;}
-    void setTileBusy(bool value){_isBusy = value;}
+    bool hasCharacter(Character *character);
 
     double getTileSpeed(int speed);
 
@@ -35,17 +37,16 @@ public:
     void drawCharacters(int x, int y, QPainter &painter);
     int getTileGarvity();
     bool hasCreature();
-    QQueue<Character*> &getCharacters();
+    QQueue<Character *> &getCharacters();
 
 private:
     QPixmap *_tileImg;
-    QQueue<Character*> _characters;
+    QQueue<Character *> _characters;
 
     bool _isWalkable = true;
     bool _isBusy = false;
     TileSpeed _tileGravity;
 
-    const QPoint &_screenCenter;
 };
 
 #endif // TILE_H

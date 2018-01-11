@@ -33,7 +33,8 @@ SOURCES += \
     pathfinder.cpp \
     tile.cpp \
     enemy.cpp \
-    image.cpp
+    image.cpp \
+    movement.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     tile.h \
     enemy.h \
     enums.h \
-    image.h
+    image.h \
+    movement.h
 
 RESOURCES += \
     images.qrc

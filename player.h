@@ -8,6 +8,7 @@
 
 class Player : public Character{
 public:
+
     Player(QString character, MainWindow *parent, int speed = 220);
 
     void attack(Character *enemy);

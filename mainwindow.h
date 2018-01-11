@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "image.h"
 
 #include "player.h"
 #include "enemy.h"
@@ -31,6 +30,10 @@ class PathFinder;
 
 
 #include <QDebug>
+
+#include "movement.h"
+class Movement;
+#include "image.h"
 
 
 class MainWindow : public QMainWindow{
@@ -70,6 +73,7 @@ public:
         double _mapZoom = 0.75;
     } dimentions;
 
+    /*
     struct Movement{
         Movement() {
             _screenCenter = QPoint(8, 4);
@@ -93,8 +97,8 @@ public:
             _screenPos->setY(y);
         }
         void followCharacterWithCamera(Character *character){
-            _screenPos = character->getPos();
-            _offset = character->movement.getOffset();
+            //_screenPos = character->getPos();
+            //_offset = character->movement.getOffset();
         }
 
         QPoint *getOffset(){
@@ -116,12 +120,15 @@ public:
         QPoint *_screenPos;
         QPoint *_offset;
     } movement;
+    */
+    QPoint _screenCenter;
+    QPoint *_screenPos;
+    QPoint *_offset;
 
     Character *getPlayer(){return _player;}
     WorldMap *getWorldMap(){return _theMap;}
     PathFinder *getPathfinder(){return _pathfinder;}
     int getSpeedPerTileForCharacter(Character *character);
-    int getSpeedPerTileForCharacter(QPoint pos, Character *character);
     void addCharacter(Character *newChar);
     void addCharacter(QPoint *pos, Character *obj);
     void removeCharacter(Character *obj);
@@ -149,8 +156,6 @@ private:
     bool _ctrlPressed = false;
     bool _altPressed = false;
 
-
-    Image *myImage;
 
 };
 

@@ -1,7 +1,12 @@
 #include "tile.h"
 
-Tile::Tile(const QPoint &screenCenter) :
-    _tileImg(nullptr), _screenCenter(screenCenter){
+Tile::Tile() :
+    _tileImg(nullptr){
+    init();
+}
+void Tile::init(){
+    _isWalkable = true;
+    _isBusy = false;
     _tileGravity = TileSpeed::medium;
 }
 
@@ -25,7 +30,7 @@ bool Tile::isWalkable(){return _isWalkable;}
 
 bool Tile::hasCreature(){
     for (int i = 0; i < _characters.size(); i++){
-        if (_characters[i]->isMoving());
+        //if (_characters[i]->isMoving());
     }
     return _characters.size() > 0;
 }
@@ -35,6 +40,13 @@ QQueue<Character *> &Tile::getCharacters(){
 }
 
 void Tile::setWalkable(bool value){_isWalkable = value;}
+
+bool Tile::hasCharacter(Character *character){
+    for (int i = 0; i < _characters.size(); i++){
+        if (_characters[i] = character)
+            return true;
+    }
+}
 
 int Tile::getTileGarvity(){
     switch ((int)_tileGravity) {
@@ -81,6 +93,6 @@ void Tile::drawTile(int x, int y, double mapZoom, QPainter &painter){
     painter.drawPixmap(x, y, _tileImg->width() * mapZoom, _tileImg->height() * mapZoom, *_tileImg);
 }
 void Tile::drawCharacters(int x, int y, QPainter &painter){
-    for (int i = 0; i < _characters.size(); i++)
-        _characters[i]->draw(x, y ,painter);
+    for (int i = 0; i < _characters.size(); i++);
+        //_characters[i]->draw(x, y ,painter);
 }
