@@ -9,11 +9,12 @@
 class Player : public Character{
 public:
 
-    Player(QString character, MainWindow *parent, int speed = 220);
+    Player(QString character, MainWindow *parent, int speed = 500);
 
     void attack(Character *enemy);
     void draw(int centerX, int centerY, QPainter &painter);
-    void meleeAttack(int speed);
+    void meleeAttack();
+    void noPath(bool tooFarAway = false);
 
 
     ~Player(){}

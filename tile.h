@@ -37,14 +37,17 @@ public:
     void drawCharacters(int x, int y, QPainter &painter);
     int getTileGarvity();
     bool hasCreature();
-    QQueue<Character *> &getCharacters();
+
+    bool isBusy(){return _isBusy;}
+    void addIsBusy(){_isBusy++;}
+    void removeIsBusy(){_isBusy--;}
 
 private:
     QPixmap *_tileImg;
     QQueue<Character *> _characters;
 
     bool _isWalkable = true;
-    bool _isBusy = false;
+    int _isBusy = 0;
     TileSpeed _tileGravity;
 
 };

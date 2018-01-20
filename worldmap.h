@@ -39,12 +39,13 @@ public:
     Tile *getTile(int indx1, int indx2);
     Tile *getTile(QPoint point);
 
+    void addIsBusy(Character *target);
+    void removeIsBusy(Character *target);
     bool isBusy(int x, int y);
     bool isBusy(QPoint pos);
 
     void toggleTile(int x, int y); // Ta bort sen?
     void toggleTile(QPoint pos); // Ta bort sen?
-
 
 
 
@@ -63,10 +64,10 @@ public:
 
     void resetMovement(FacingDirection direction);
 
-    void addCharacter(Character *newChar);
-    void addCharacter(int x, int y, Character *obj);
-    void removeCharacter(Character *other);
-    void removeCharacter(int x, int y, Character *obj);
+    void addCharacter(Character *character);
+    void removeCharacter(Character *character);
+
+    QVector<QVector<Tile*>> &getMap(){return (QVector<QVector<Tile*>>&)_theMap;}
 
 private slots:
     void moveNorth();

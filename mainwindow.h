@@ -3,9 +3,12 @@
 
 
 #include "player.h"
-#include "enemy.h"
+#include "npc.h"
 #include "worldmap.h"
 class WorldMap;
+
+#include "gui.h"
+class GUI;
 
 #include "pathfinder.h"
 class PathFinder;
@@ -70,7 +73,7 @@ public:
     private:
         int _orgTileSize = 100;
         int _drawTileSize;
-        double _mapZoom = 0.75;
+        double _mapZoom = 1;
     } dimentions;
 
     /*
@@ -121,31 +124,34 @@ public:
         QPoint *_offset;
     } movement;
     */
-    QPoint _screenCenter;
+    QPoint _screenCenter {7, 5};
     QPoint *_screenPos;
     QPoint *_offset;
+
+    void followWithCamera(Character *character){
+        auto info = character->getPosReference();
+        _screenPos = std::get<0>(info);
+        _offset = std::get<1>(info);
+    }
 
     Character *getPlayer(){return _player;}
     WorldMap *getWorldMap(){return _theMap;}
     PathFinder *getPathfinder(){return _pathfinder;}
     int getSpeedPerTileForCharacter(Character *character);
     void addCharacter(Character *newChar);
-    void addCharacter(QPoint *pos, Character *obj);
     void removeCharacter(Character *obj);
-    void removeCharacter(QPoint *pos, Character *obj);
 
-    FacingDirection findPath(QPoint *startPos,  QPoint *endPos);
+    FacingDirection findPath(QPoint startPos,  QPoint endPos);
     bool valid(QPoint &pos);
     bool valid(QPoint *pos);
     bool valid(int x, int y);
 
-    bool isWalkable(QPoint pos);
-    bool isWalkable(int x, int y);
 private:
     QTimer *_FPSTimer;
     QElapsedTimer _keyPressElapsedTimer;
 
     WorldMap *_theMap;
+    GUI *_GUI;
 
     Character *_player;
     Character *_enemy;

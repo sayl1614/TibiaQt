@@ -17,41 +17,67 @@ class Character : public QObject{
 public:
     Character(QString character, MainWindow *parent, int speed = 220);
 
-    void init();
+    void init(QString charName);
 
-    State isMoving(){return _state;}
-    QPoint getStart();
-    QPoint getEnd();
+    WorldMap *getWorldMap();
+    MainWindow *getGui(){return _parent;}
 
-    int getSpeed(){return 1;}
-
-    void setDirection(FacingDirection direction){_direction = direction;}
-
-    void move(FacingDirection direction);
-
-
-    void playAnimation(int _msPerSquare);
-    void reload(QString character);
-
-    void face(FacingDirection direction);
+    // Positioning
+    virtual QPoint getStart(){return _movement->getStart();}
+    virtual QPoint getEnd(){return _movement->getNext();}
+    virtual QPoint getOffset(){return _movement->getOffset();}
+    std::tuple<QPoint*, QPoint*> getPosReference();
 
 
-    void draw(int x, int y, double zoom, QPainter &painter);
+    // Movement
+    virtual void move(FacingDirection direction);
+    virtual void stopMoving();
+    virtual bool isMoving(){return _movement->isMoving();}
+    virtual FacingDirection findPath();
+    virtual FacingDirection findPath(Character *target);
+    virtual FacingDirection findPath(QPoint pos);
+    void follow(Character *target);
+
+    int distanceToEnemy();
+
+    bool withinChasing();
+
+    virtual void noPath(bool tooFarAway = false) = 0;
+    virtual int getSpeed(){return _movement->getSpeed();}
 
 
-private:
+    // Combat
+    bool hasTarget(){return (bool)_target;}
+    Character *getTarget(){return _target;}
+    virtual void meleeAttack() = 0;
+
+
+    virtual void playAnimation(int _msPerSquare);
+    virtual void stopAnimation();
+    virtual void reload(QString character);
+
+    virtual void face(FacingDirection direction);
+
+
+    virtual void draw(int x, int y, QPainter &painter);
+
+    virtual ~Character(){}
+protected slots:
+
+protected:
+    QString _charName;
+
     MainWindow *_parent;
+
+    Character *_target;
 
     int _framesPerSquare = 8;
     QVector<Image*> _moveAnimation;
     FacingDirection _direction {FacingDirection::south};
-    //Movement movement;
+    Movement *_movement;
 
 
-    State _state;
-
-    QPoint _start;
-    QPoint _end;
+    int _drawOffset;
 };
 
 #endif // CHARACTER_H

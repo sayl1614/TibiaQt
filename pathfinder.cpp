@@ -58,7 +58,7 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
         initialStage(_startNode, _endNode, _prioFirst);
         initialStage(_endNode, _startNode, _prioEnd);
     }
-    FacingDirection direction = FacingDirection::continueToNext;
+    FacingDirection direction;
     while (true){
         direction = findClosestPath(&_from, _endNode, _prioFirst, debugMode); // Primary search
         if (direction != FacingDirection::continueToNext)
@@ -92,27 +92,6 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
                 return FacingDirection::notFound;
             }
         }
-
-        if (_prio.size() > 25){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 50){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 100){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 150){
-            int x = 0;
-            int y = x;
-        }
-
-
-
-
         while (_prio.size()){
             if (_prio.top()->_closed == true){
                 _prio.pop();
@@ -223,7 +202,7 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
 
 
 void PathFinder::addNode(bool *me, Node *goalNode, int gravity, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
-    if (!_parent->isWalkable(x, y))
+    if (!_theMap->isWalkable(x, y))
         return;
     _childNode = _grid[x][y];
     if (_childNode == nullptr){

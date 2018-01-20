@@ -4,21 +4,22 @@
 #include "character.h"
 #include "enums.h"
 
-class Enemy : public Character{
+class NPC : public Character{
 public:
-    /*
-    Enemy(QString character, MainWindow *parent, Character *enemy = nullptr, int speed = 100);
+    NPC(QString character, MainWindow *parent, Character *enemy = nullptr, int speed = 250);
 
     void draw(int centerX, int centerY, QPainter &painter);
 
-    void attack(Character *enemy);
-    void meleeAttack(int speed);
+    void noPath(bool tooFarAway = false);
 
-    ~Enemy(){}
-private:
+    void attack(Character *enemy);
+    void meleeAttack();
+
+    ~NPC();
+protected:
+
 protected slots:
     virtual bool moveTwardsEnemy();
-    */
 };
 
 #endif // ENEMY_H

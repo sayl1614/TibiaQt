@@ -6,7 +6,6 @@ Tile::Tile() :
 }
 void Tile::init(){
     _isWalkable = true;
-    _isBusy = false;
     _tileGravity = TileSpeed::medium;
 }
 
@@ -35,9 +34,6 @@ bool Tile::hasCreature(){
     return _characters.size() > 0;
 }
 
-QQueue<Character *> &Tile::getCharacters(){
-    return _characters;
-}
 
 void Tile::setWalkable(bool value){_isWalkable = value;}
 
@@ -93,6 +89,6 @@ void Tile::drawTile(int x, int y, double mapZoom, QPainter &painter){
     painter.drawPixmap(x, y, _tileImg->width() * mapZoom, _tileImg->height() * mapZoom, *_tileImg);
 }
 void Tile::drawCharacters(int x, int y, QPainter &painter){
-    for (int i = 0; i < _characters.size(); i++);
-        //_characters[i]->draw(x, y ,painter);
+    for (int i = 0; i < _characters.size(); i++)
+        _characters[i]->draw(x, y ,painter);
 }

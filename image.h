@@ -39,8 +39,6 @@ private:
     int _framesPerSquare = 8;
     int _currentImage = 0;
 
-
-
 private slots:
     void nextImage();
 };

@@ -10,9 +10,10 @@ WorldMap::WorldMap(MainWindow *parent) :
             _theMap[x][y]->setTileImg(first);
         }
     }
-    if (_parent->getPlayer())
+    if (_parent->getPlayer()){
         _player = _parent->getPlayer();
-    //_theMap[_player->getPos()->x()][_player->getPos()->y()]->addCharacter(_player);
+        //_theMap[_player->getEnd().x()][_player->getEnd().y()]->addCharacter(_player);
+    }
     /**/
 
     first = nullptr;
@@ -33,6 +34,14 @@ bool WorldMap::isWalkable(int x, int y){
 }
 
 bool WorldMap::isWalkable(QPoint point){
+    if (point.x() < 0 || point.y() < 0)
+        return false;
+
+    bool iswalkable = _theMap[point.x()][point.y()]->isWalkable();
+    bool isbusy = isBusy(point);
+
+
+
     if (_theMap[point.x()][point.y()]->isWalkable() && !isBusy(point))
         return true;
     return false;
@@ -46,17 +55,19 @@ Tile *WorldMap::getTile(QPoint point){
     return getTile(point.x(), point.y());
 }
 
+void WorldMap::addIsBusy(Character *target){
+    return _theMap[target->getEnd().x()][target->getEnd().y()]->addIsBusy();
+}
+
+void WorldMap::removeIsBusy(Character *target){
+    return _theMap[target->getStart().x()][target->getStart().y()]->removeIsBusy();
+}
+
 bool WorldMap::isBusy(QPoint pos){
     return isBusy(pos.x(), pos.y());
 }
 bool WorldMap::isBusy(int x, int y){
-    QQueue<Character*> theCharacters = _theMap[x][y]->getCharacters();
-    for (int i = 0; i < theCharacters.size(); i++){
-        if (theCharacters[i]->getEnd() == QPoint(x, y)){
-            return true;
-        }
-    }
-    return false;
+    return _theMap[x][y]->isBusy();
 }
 
 void WorldMap::toggleTile(int x, int y){
@@ -104,21 +115,13 @@ void WorldMap::move(FacingDirection direction){
     _movementTime.restart();
 }
 
-void WorldMap::addCharacter(Character *obj){
-    //_theMap[obj->movement.getEndPos()->x()][obj->movement.getEndPos()->y()]->addCharacter(obj);
-}
-void WorldMap::addCharacter(int x, int y, Character *obj){
-    //_theMap[x][y]->addCharacter(obj);
+void WorldMap::addCharacter(Character *character){
+    _theMap[character->getEnd().x()][character->getEnd().y()]->addCharacter(character);
 }
 
-
-void WorldMap::removeCharacter(Character *obj){
-    //_theMap[obj->movement.getStartPos()->x()][obj->movement.getStartPos()->y()]->removeCharacter(obj);
+void WorldMap::removeCharacter(Character *character){
+    _theMap[character->getStart().x()][character->getStart().y()]->removeCharacter(character);
 }
-void WorldMap::removeCharacter(int x, int y, Character *obj){
-    _theMap[x][y]->removeCharacter(obj);
-}
-
 void WorldMap::stopMoving(){
     addCharacter(_player);
 
@@ -253,8 +256,7 @@ void WorldMap::drawMap(QPainter &painter){
                 continue;
 
 
-            _theMap[indexPosX][indexPosY]->drawTile( drawXPos, drawYPos,
-                                                     _parent->dimentions.getMapZoom(), painter);
+            _theMap[indexPosX][indexPosY]->drawTile( drawXPos, drawYPos, _parent->dimentions.getMapZoom(), painter);
         }
     }
 

@@ -6,12 +6,16 @@
 #include <QObject>
 #include <QString>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include <QPoint>
 
 #include <QVector>
 
 #include <QPainter>
+
+#include <random>
+#include <time.h>
 
 class WorldMap;
 class Character;
@@ -24,16 +28,28 @@ public:
 
     void init();
 
-    int move(FacingDirection direction, WorldMap *character);
 
     QPoint getStart(){return _start;}
+    QPoint *getStartRef(){return &_start;}
     void setStart(QPoint pos){_start = pos;}
     QPoint getNext(){return _next;}
     void setNext(QPoint pos){_next = pos;}
     void changeNext(int x, int y);
+    QPoint getOffset(){return _offset;}
+    QPoint *getOffsetRef(){return &_offset;}
+    void setOffset(QPoint pos){_offset = pos;}
+    void setOffset(int x, int y){setOffset(QPoint(x, y));}
+    void changeOffset(int x, int y);
+
+    int movementWonderAround();
 
     int getSpeed(){return _speed;}
     int setSpeed(int speed){_speed = speed;}
+
+
+    void move(FacingDirection direction);
+    bool isMoving(){return _state == State::moving || _state == State::following;}
+    void stopMoving();
 
     ~Movement(){}
 private:
@@ -42,14 +58,18 @@ private:
     int _moveUpdateInMS = 20;
 
     QVector<QTimer *> _moveInterval;
+    QTimer *_followTimer;
+    QElapsedTimer *_timeSpentMoving;
     int _msPerSquare;
 
-    QPoint _start;
-    QPoint _next;
+    QPoint _start {5, 5};
+    QPoint _next {5, 5};
     QPoint _offset {0, 0};
 
     State _state;
     int _speed;
+public slots:
+    void follow();
 private slots:
     void moveNorth();
     void moveWest();
