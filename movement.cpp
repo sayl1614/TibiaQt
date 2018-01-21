@@ -39,28 +39,32 @@ void Movement::changeOffset(int x, int y){
     _offset.setY(_offset.y() + y);
 }
 
+void Movement::meleeDistance(){
+    _followTimer->start(2000);
+    if (_character->targetIsHostile()){
+        _character->meleeAttack();
+        _runExhausted = true;
+    }
+}
+
 void Movement::follow(){
     if (_character->hasTarget()){
         _followTimer->stop();
-        // If too far away
-        if (!_character->withinChasing()){
+        if (!_character->withinChasing()){ // If too far away
             _state = State::none;
-            _followTimer->start(500); // Too far away
+            _followTimer->start(500);
             _character->noPath(true);
             return;
         }
         else if (_character->distanceToEnemy() == 0){ // Still in melee distance
-            _followTimer->start(2000);
-            if (_character->targetIsHostile())
-                _character->meleeAttack();
-            _runExhausted = true;
+            _state = State::none;
+            meleeDistance();
             return;
         }
 
         FacingDirection direction = _character->findPath();
 
         if (direction == FacingDirection::notFound){// No path!
-            _state = State::none;
             _character->noPath();
             return;
         }
@@ -73,11 +77,7 @@ void Movement::follow(){
         }
         else{ // Just arrived at melee distance
             if (_character->targetIsHostile()){
-                _followTimer->start(2000);
-                if (_character->targetIsHostile())
-                    _character->meleeAttack();
-                _runExhausted = true;
-                _state = State::none;
+                meleeDistance();
             }
             else
                 _followTimer->start(500);
@@ -221,10 +221,9 @@ void Movement::stopMoving(){
     _start = _next;
 
     if (_isFollowing){
-        if (!isMoving() || _runExhausted){
+        if (isMoving() || _runExhausted){
             _state = State::none;
             _character->stopAnimation();
-            return;
         }
         if (!_followTimer->isActive())
             follow();
@@ -239,7 +238,7 @@ void Movement::stopMoving(){
 int Movement::movementWonderAround(){
     FacingDirection direction = (FacingDirection)(rand() % 4);
     move(direction);
-    if (_character->isMoving())
+    if (isMoving())
         _followTimer->start(_msPerSquare * 3);
     else
         _followTimer->start(_msPerSquare + 25);

@@ -17,7 +17,7 @@ void NPC::draw(int x, int y, QPainter &painter){
 }
 
 void NPC::noPath(bool tooFarAway){
-    stopMoving();
+    stopAnimation();
     if (tooFarAway){
         return;
     }
