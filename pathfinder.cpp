@@ -58,7 +58,7 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
         initialStage(_startNode, _endNode, _prioFirst);
         initialStage(_endNode, _startNode, _prioEnd);
     }
-    FacingDirection direction = FacingDirection::continueToNext;
+    FacingDirection direction;
     while (true){
         direction = findClosestPath(&_from, _endNode, _prioFirst, debugMode); // Primary search
         if (direction != FacingDirection::continueToNext)
@@ -72,7 +72,6 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
 }
 
 void PathFinder::initialStage(Node *startNode, Node *endNode, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
-
     _currNode = new Node(startNode->_pos);
     double tileGravity = _theMap->getTile(_currNode->_pos)->getTileGarvity();
     _currNode->_g = -tileGravity;
@@ -93,27 +92,6 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
                 return FacingDirection::notFound;
             }
         }
-
-        if (_prio.size() > 25){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 50){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 100){
-            int x = 0;
-            int y = x;
-        }
-        if (_prio.size() > 150){
-            int x = 0;
-            int y = x;
-        }
-
-
-
-
         while (_prio.size()){
             if (_prio.top()->_closed == true){
                 _prio.pop();
@@ -224,7 +202,7 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
 
 
 void PathFinder::addNode(bool *me, Node *goalNode, int gravity, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
-    if (!_parent->isWalkable(x, y))
+    if (!_theMap->isWalkable(x, y))
         return;
     _childNode = _grid[x][y];
     if (_childNode == nullptr){
@@ -343,12 +321,12 @@ void PathFinder::draw(QPainter &painter){
 
     int indexPosY = _theMap->getIndexPos('y');
 
-    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetY(); drawYPos < 900; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
+    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->y(); drawYPos < 900; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
         if (indexPosY < 0 || indexPosY >= _theMap->getMapHeight())
             continue;
 
         int indexPosX = _theMap->getIndexPos('x');
-        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetX(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
+        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->x(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
             if (indexPosX < 0 || indexPosX >= _theMap->getMapWidth())
                 continue;
 

@@ -32,7 +32,10 @@ SOURCES += \
     worldmap.cpp \
     pathfinder.cpp \
     tile.cpp \
-    enemy.cpp
+    image.cpp \
+    movement.cpp \
+    gui.cpp \
+    npc.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,7 +44,11 @@ HEADERS += \
     worldmap.h \
     pathfinder.h \
     tile.h \
-    enemy.h
+    enums.h \
+    image.h \
+    movement.h \
+    gui.h \
+    npc.h
 
 RESOURCES += \
     images.qrc

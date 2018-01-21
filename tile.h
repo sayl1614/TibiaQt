@@ -1,37 +1,38 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "character.h"
-class Character;
+#include <assert.h>
 
+#include "character.h"
+class WorldMap;
+
+#include <QPainter>
 #include <QPoint>
 #include <QPixmap>
 #include <QVector>
 #include <QQueue>
 
-#include <QPainter>
 
-enum class TileSpeed{
-    verySlow,
-    slow,
-    medium,
-    fast,
-    veryFast
-};
+#include "enums.h"
+
 
 
 class Tile{
 public:
-    Tile(const QPoint &screenCenter);
+    Tile(QPixmap *image = nullptr);
+    Tile(QPoint pos, QPixmap *image = nullptr);
+    Tile(int x, int y, QPixmap *image = nullptr);
+    void init();
 
     void setTileImg(QPixmap *img);
     void addCharacter(Character *newChar);
     bool isWalkable();
     void setWalkable(bool value);
-    bool isBusy(){return _isBusy;}
-    void setTileBusy(bool value){_isBusy = value;}
+    bool hasCharacter(Character *character);
 
     double getTileSpeed(int speed);
+    QPoint getPos(){return _pos;}
+    void setPos(QPoint pos){_pos = pos;}
 
     void drawTile(QPoint &pos, double mapZoom, QPainter &painter);
 
@@ -40,17 +41,23 @@ public:
     void drawCharacters(int x, int y, QPainter &painter);
     int getTileGarvity();
     bool hasCreature();
-    QQueue<Character*> &getCharacters();
+
+    bool isBusy(){
+        for (int i = 0; i < _characters.size(); i++){
+            if (_characters[i]->getEnd() == this->_pos)
+                return true;
+        }
+        return false;
+    }
 
 private:
     QPixmap *_tileImg;
-    QQueue<Character*> _characters;
+    QQueue<Character *> _characters;
 
     bool _isWalkable = true;
-    bool _isBusy = false;
+    int _isBusy = 0;
     TileSpeed _tileGravity;
-
-    const QPoint &_screenCenter;
+    QPoint _pos;
 };
 
 #endif // TILE_H

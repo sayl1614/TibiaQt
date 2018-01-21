@@ -11,16 +11,17 @@
 #include <functional>
 #include <QString>
 
+#include <QElapsedTimer>
+
 #include "character.h"
-class Character;
-enum class FacingDirection;
+class WorldMap;
 
 #include <QTimer>
 
 #include <QPainter>
 
-#include <QDebug>
-#include <QLabel>
+
+#include "enums.h"
 
 #include "mainwindow.h"
 
@@ -38,6 +39,9 @@ public:
     Tile *getTile(int indx1, int indx2);
     Tile *getTile(QPoint point);
 
+    bool isBusy(int x, int y);
+    bool isBusy(QPoint pos);
+
     void toggleTile(int x, int y); // Ta bort sen?
     void toggleTile(QPoint pos); // Ta bort sen?
 
@@ -49,7 +53,6 @@ public:
     void move(FacingDirection direction);
     void stopMoving();
     int getSpeedPerTileForCharacter(Character *character);
-    int getSpeedPerTileForCharacter(QPoint pos, Character *character);
 
     int getMapWidth(){return _mapWidth;}
     int getMapHeight(){return _mapHeight;}
@@ -59,13 +62,11 @@ public:
 
     void resetMovement(FacingDirection direction);
 
-    void addCharacter(Character *newChar);
-    void addCharacter(int x, int y, Character *obj);
-    void removeCharacter(Character *other);
-    void removeCharacter(int x, int y, Character *obj);
+    void addCharacter(Character *character);
+    void removeCharacter(Character *character);
 
-    QQueue<Character*> &getCharacters(QPoint pos);
-    QQueue<Character*> &getCharacters(int x, int y);
+    QVector<QVector<Tile*>> &getMap(){return (QVector<QVector<Tile*>>&)_theMap;}
+
 private slots:
     void moveNorth();
     void moveWest();

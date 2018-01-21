@@ -6,13 +6,14 @@ WorldMap::WorldMap(MainWindow *parent) :
     _theMap.resize(_mapHeight);
     for (int y = 0; y < _mapHeight; y++){
         for (int x = 0; x < _mapWidth; x++){
-            _theMap[x].push_back(new Tile(_parent->movement.getScreenCenter()));
+            _theMap[x].push_back(new Tile(x, y));
             _theMap[x][y]->setTileImg(first);
         }
     }
-
-    _player = _parent->getPlayer();
-    _theMap[_player->getPos()->x()][_player->getPos()->y()]->addCharacter(_player);
+    if (_parent->getPlayer()){
+        _player = _parent->getPlayer();
+        _theMap[_player->getEnd().x()][_player->getEnd().y()]->addCharacter(_player);
+    }
     /**/
 
     first = nullptr;
@@ -33,7 +34,15 @@ bool WorldMap::isWalkable(int x, int y){
 }
 
 bool WorldMap::isWalkable(QPoint point){
-    if (_theMap[point.x()][point.y()]->isWalkable())
+    if (point.x() < 0 || point.y() < 0)
+        return false;
+
+    bool iswalkable = _theMap[point.x()][point.y()]->isWalkable();
+    bool isbusy = isBusy(point);
+
+
+
+    if (_theMap[point.x()][point.y()]->isWalkable() && !isBusy(point))
         return true;
     return false;
 }
@@ -44,6 +53,14 @@ Tile *WorldMap::getTile(int indx1, int indx2){
 
 Tile *WorldMap::getTile(QPoint point){
     return getTile(point.x(), point.y());
+}
+
+
+bool WorldMap::isBusy(QPoint pos){
+    return isBusy(pos.x(), pos.y());
+}
+bool WorldMap::isBusy(int x, int y){
+    return _theMap[x][y]->isBusy();
 }
 
 void WorldMap::toggleTile(int x, int y){
@@ -74,7 +91,7 @@ bool WorldMap::valid(int x, int y){
 }
 
 void WorldMap::move(FacingDirection direction){
-    assert(!_player->isMoving());
+    //assert(!_player->isMoving());
 
     for (int i = 0; i < _mapMovementTimer.size(); i++){
         if (_mapMovementTimer[i]->isActive()){
@@ -86,56 +103,38 @@ void WorldMap::move(FacingDirection direction){
 
     _msPerSquare = getSpeedPerTileForCharacter(_player);
 
-    _player->setMovementAnimationInterval(_msPerSquare);
+    //_player->setMovementAnimationInterval(_msPerSquare);
 
     _movementTime.restart();
 }
 
-void WorldMap::addCharacter(Character *obj){
-    _theMap[obj->movement.getEndPos()->x()][obj->movement.getEndPos()->y()]->addCharacter(obj);
-}
-void WorldMap::addCharacter(int x, int y, Character *obj){
-    _theMap[x][y]->addCharacter(obj);
+void WorldMap::addCharacter(Character *character){
+    _theMap[character->getEnd().x()][character->getEnd().y()]->addCharacter(character);
 }
 
-
-void WorldMap::removeCharacter(Character *obj){
-    _theMap[obj->movement.getStartPos()->x()][obj->movement.getStartPos()->y()]->removeCharacter(obj);
+void WorldMap::removeCharacter(Character *character){
+    _theMap[character->getStart().x()][character->getStart().y()]->removeCharacter(character);
 }
-void WorldMap::removeCharacter(int x, int y, Character *obj){
-    _theMap[x][y]->removeCharacter(obj);
-}
-
-QQueue<Character *> &WorldMap::getCharacters(QPoint pos){
-    return getCharacters(pos.x(), pos.y());
-}
-QQueue<Character *> &WorldMap::getCharacters(int x, int y){
-    return _theMap[x][y]->getCharacters();
-}
-
 void WorldMap::stopMoving(){
     addCharacter(_player);
 
     removeCharacter(_player);
 
-    resetMovement(_player->getFacingDirection());
+    //resetMovement(_player->getFacingDirection());
 }
 
 void WorldMap::resetMovement(FacingDirection direction){
     _mapMovementTimer[(int)direction]->stop();
-    _player->stopMoving();
+    //_player->stopMoving();
 }
 
 int WorldMap::getSpeedPerTileForCharacter(Character *character){
-    return _theMap[character->getPos()->x()][character->getPos()->y()]->
-            getTileSpeed(_player->getSpeed());
-}
-
-int WorldMap::getSpeedPerTileForCharacter(QPoint pos, Character *character){
-    return _theMap[pos.x()][pos.y()]->getTileSpeed(_player->getSpeed());
+    return _theMap[character->getEnd().x()][character->getEnd().y()]->
+            getTileSpeed(character->getSpeed());
 }
 
 void WorldMap::moveNorth(){
+    /*
     if (!_player->isMoving()){
         _player->movement.changeEndPos(0, -1);
         if (!valid(_player->movement.getEndPos())){
@@ -154,9 +153,11 @@ void WorldMap::moveNorth(){
     if (_movementTime.elapsed() >= (_msPerSquare)){
         stopMoving();
     }
+    */
 }
 
 void WorldMap::moveWest(){
+    /*
     if (!_player->isMoving()){
         _player->movement.changeEndPos(-1, 0);
         if (!valid(_player->movement.getEndPos())){
@@ -175,9 +176,11 @@ void WorldMap::moveWest(){
     if (_movementTime.elapsed() >= _msPerSquare){
         stopMoving();
     }
+    */
 }
 
 void WorldMap::moveSouth(){
+    /*
     if (!_player->isMoving()){
         _player->movement.changeEndPos(0, 1);
         if (!valid(_player->movement.getEndPos())){
@@ -196,9 +199,11 @@ void WorldMap::moveSouth(){
     if (_movementTime.elapsed() >= (_msPerSquare)){
         stopMoving();
     }
+    */
 }
 
 void WorldMap::moveEast(){
+    /*
     if (!_player->isMoving()){
         _player->movement.changeEndPos(1, 0);
         if (!valid(_player->movement.getEndPos())){
@@ -217,15 +222,16 @@ void WorldMap::moveEast(){
     if (_movementTime.elapsed() >= (_msPerSquare)){
         stopMoving();
     }
+    */
 }
 
 int WorldMap::getIndexPos(char index){
     if (index == 'x')
-        return floor((_parent->movement.getScreenPos()->x()) -
-                              (_parent->movement.getScreenCenter().x() / _parent->dimentions.getMapZoom()));
-    else // if 'x';
-        return floor((_parent->movement.getScreenPos()->y()) -
-                              (_parent->movement.getScreenCenter().y() / _parent->dimentions.getMapZoom()));
+        return floor((_parent->_screenPos->x()) -
+                              (_parent->_screenCenter.x() / _parent->dimentions.getMapZoom()));
+    else // if 'y';
+        return floor((_parent->_screenPos->y()) -
+                              (_parent->_screenCenter.y() / _parent->dimentions.getMapZoom()));
 }
 
 void WorldMap::drawMap(QPainter &painter){
@@ -233,31 +239,30 @@ void WorldMap::drawMap(QPainter &painter){
     // Draw tiles (and items?)
     int indexPosY = getIndexPos('y');
 
-    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetY(); drawYPos < 850; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
+    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->y(); drawYPos < 850; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
         if (indexPosY < 0 || indexPosY >= _mapHeight)
             continue;
 
         int indexPosX = getIndexPos('x');
-        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetX(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
+        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->x(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
             if (indexPosX < 0 || indexPosX >= _mapWidth)
                 continue;
 
 
-            _theMap[indexPosX][indexPosY]->drawTile( drawXPos, drawYPos,
-                                                     _parent->dimentions.getMapZoom(), painter);
+            _theMap[indexPosX][indexPosY]->drawTile( drawXPos, drawYPos, _parent->dimentions.getMapZoom(), painter);
         }
     }
 
     // Draw characters
     indexPosY = getIndexPos('y');
 
-    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetY(); drawYPos < 850; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
+    for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->y(); drawYPos < 850; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
         if (indexPosY < 0 || indexPosY >= _mapHeight)
             continue;
 
         int indexPosX = getIndexPos('x');
 
-        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->movement.getOffsetX(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
+        for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->x(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
             if (indexPosX < 0 || indexPosX >= _mapWidth)
                 continue;
 

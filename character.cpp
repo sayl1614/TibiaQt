@@ -2,200 +2,77 @@
 
 #include "mainwindow.h"
 
+
 Character::Character(QString character, MainWindow *parent, int speed) :
-    _moveSpeed(speed), _parent(parent){
+    _charName(character), _parent(parent){
 
-    srand(time(NULL));
+    _movement = new Movement(this);
+    _movement->setSpeed(speed);
 
-    movement.setAnimationIndex(0);
-    movement._move.resize(4);
-
-    loadCharacterImages(character);
-    setFacingDirection(FacingDirection::south);
-    setAnimationAttributes();
-
-
-    int sides = 4;
-    for (int i = 0; i < sides; i++)
-        _mapMovementTimer.push_back(new QTimer(this));
-    connect(_mapMovementTimer[(int)FacingDirection::north], SIGNAL(timeout()), this, SLOT(moveNorth()));
-    connect(_mapMovementTimer[(int)FacingDirection::west], SIGNAL(timeout()), this, SLOT(moveWest()));
-    connect(_mapMovementTimer[(int)FacingDirection::south], SIGNAL(timeout()), this, SLOT(moveSouth()));
-    connect(_mapMovementTimer[(int)FacingDirection::east], SIGNAL(timeout()), this, SLOT(moveEast()));
-    _movementTime.start();
-
-    _followTimer = new QTimer(this);
-    connect(_followTimer, SIGNAL(timeout()), this, SLOT(follow()));
-
-    _box_BlackTimer = new QTimer(this);
-    connect(_box_BlackTimer, SIGNAL(timeout()), this, SLOT(setBox_BlackOff()));
-
-    _movementAnimationTimer.start();
+    init(character);
 }
 
-// rerun when level up?
-void Character::setAnimationAttributes(){
-    _orgCharacterSize = _player->width();
-    _drawCharacterSize = _parent->dimentions.getMapZoom() * _orgCharacterSize;
-    _drawTileSize = _orgTileSize * _parent->dimentions.getMapZoom();
-    _drawOffset = _drawCharacterSize - _drawTileSize;
+void Character::init(QString charName){
+    _moveAnimation.push_back(new Image(":/images/characters/" + charName + "/north"));
+    _moveAnimation.push_back(new Image(":/images/characters/" + charName + "/west"));
+    _moveAnimation.push_back(new Image(":/images/characters/" + charName + "/south"));
+    _moveAnimation.push_back(new Image(":/images/characters/" + charName + "/east"));
+    _drawOffset = _moveAnimation[0]->getWidth() - _parent->dimentions.getDrawTileSize();
 }
 
-
-void Character::animateNextMovement(){
-    if (movement.getAnimationIndex() >= movement._move[(int)_facingDir].size()){
-        int newPos = movement._move[(int)_facingDir].size() > 2 ? 1 : 0;
-        movement.setAnimationIndex(newPos);
-    }
-    _player = &movement._move[(int)_facingDir][movement.getAnimationIndex()];
+WorldMap *Character::getWorldMap(){
+    return _parent->getWorldMap();
 }
 
-void Character::animationUpdate(){
-    if ((isMoving() || hasPassiveAnimation()) &&
-            (_movementAnimationTimer.elapsed() > movement.getMovementAnimationInterval())){
-        movement++;
-        animateNextMovement();
-        _movementAnimationTimer.restart();
+#include <tuple>
+std::tuple<QPoint*, QPoint*> Character::getPosReference(){
+    return std::make_tuple(_movement->getStartRef(), _movement->getOffsetRef());
+}
+
+void Character::reload(QString character){
+    for (int i = 0; i < _moveAnimation.size(); i++){
+        _moveAnimation[i]->reloadImage(character);
     }
 }
 
-void Character::directionUpdate(){
-    _player = &movement._move[(int)_facingDir][movement.getAnimationIndex()];
+void Character::face(FacingDirection direction){
+    stopAnimation();
+    _direction = direction;
 }
 
-void Character::setCharacter(QString newChar){
-    while (movement._move[(int)FacingDirection::north].size())
-        movement._move[(int)FacingDirection::north].pop_back();
-    while (movement._move[(int)FacingDirection::west].size())
-        movement._move[(int)FacingDirection::west].pop_back();
-    while (movement._move[(int)FacingDirection::south].size())
-        movement._move[(int)FacingDirection::south].pop_back();
-    while (movement._move[(int)FacingDirection::east].size())
-        movement._move[(int)FacingDirection::east].pop_back();
-    loadCharacterImages(newChar);
+void Character::draw(int x, int y, QPainter &painter) {
+    _moveAnimation[(int)_direction]->draw(x, y, _parent->dimentions.getMapZoom(), painter);
+}
+
+void Character::move(FacingDirection direction){
+    _movement->move(direction);
 }
 
 void Character::stopMoving(){
-    _state = State::none;
-    movement.setAnimationIndex(0);
-    directionUpdate();
-    movement.changeOffset(0, 0);
-
-    _parent->addCharacter(movement.getEndPos(), this);
-    _parent->removeCharacter(movement.getStartPos(), this);
-
-    movement.setStartPos(movement.getEndPos());
-    for (int i = 0; i < _mapMovementTimer.size(); i++){
-        if (_mapMovementTimer[i]->isActive()){
-            _mapMovementTimer[i]->stop();
-        }
-    }
+    _movement->stopMoving();
 }
 
-int Character::move(FacingDirection direction){
-    if (direction == FacingDirection::notFound)
-        return -1;
-    for (int i = 0; i < _mapMovementTimer.size(); i++){
-        if (_mapMovementTimer[i]->isActive()){
-            return -1;
-        }
-    }
-    switch (direction) {
-    case FacingDirection::north:
-        movement.changeEndPos(0, -1);
-        if (!_parent->isWalkable(*movement.getEndPos())){
-            movement.setEndPos(movement.getStartPos());
-            return -1;
-        }
-        setFacingDirection(FacingDirection::north);
-        break;
-    case FacingDirection::west:
-        movement.changeEndPos(-1, 0);
-        if (!_parent->isWalkable(*movement.getEndPos())){
-            movement.setEndPos(movement.getStartPos());
-            return -1;
-        }
-        setFacingDirection(FacingDirection::west);
-        break;
-    case FacingDirection::south:
-        movement.changeEndPos(0, 1);
-        if (!_parent->isWalkable(*movement.getEndPos())){
-            movement.setEndPos(movement.getStartPos());
-            return -1;
-        }
-        setFacingDirection(FacingDirection::south);
-        break;
-    case FacingDirection::east:
-        movement.changeEndPos(1, 0);
-        if (!_parent->isWalkable(*movement.getEndPos())){
-            movement.setEndPos(movement.getStartPos());
-            _mapMovementTimer[(int)direction]->stop();
-            return -1;
-        }
-        setFacingDirection(FacingDirection::east);
-        break;
-    }
-    _parent->getWorldMap()->getTile(*movement.getEndPos())->setTileBusy(true);
-    _parent->getWorldMap()->getTile(*movement.getStartPos())->setTileBusy(false);
-    setState(State::moving);
-
-    _mapMovementTimer[(int)direction]->start(this->_moveUpdateInMS);
-
-    _msPerSquare = _parent->getSpeedPerTileForCharacter(this);
-
-    setMovementAnimationInterval(_msPerSquare);
-
-    _movementTime.restart();
-    return _msPerSquare;
+FacingDirection Character::findPath(){
+    return _parent->findPath(getEnd(), _target->getEnd());
 }
 
-void Character::moveNorth(){
-    double percent = _movementTime.elapsed() / (double)_msPerSquare;
-    int dist = percent * _parent->dimentions.getDrawTileSize();
-
-    movement.changeOffset(0, -dist);
-
-    if (_movementTime.elapsed() >= (_msPerSquare)){
-        stopMoving();
-    }
+FacingDirection Character::findPath(Character *target){
+    return _parent->findPath(getEnd(), target->getEnd());
 }
 
-void Character::moveWest(){
-    double percent = _movementTime.elapsed() / (double)_msPerSquare;
-    int dist = percent * _parent->dimentions.getDrawTileSize();
-
-    movement.changeOffset(-dist, 0);
-
-    if (_movementTime.elapsed() >= _msPerSquare){
-        stopMoving();
-    }
+FacingDirection Character::findPath(QPoint pos){
+    return _parent->findPath(getEnd(), pos);
 }
 
-void Character::moveSouth(){
-    double percent = _movementTime.elapsed() / (double)_msPerSquare;
-    int dist = percent * _parent->dimentions.getDrawTileSize();
-
-    movement.changeOffset(0, dist);
-
-    if (_movementTime.elapsed() >= (_msPerSquare)){
-        stopMoving();
-    }
+void Character::follow(Character *target){
+    _target = target;
+    _movement->setFollowing(true);
+    _movement->follow();
 }
 
-void Character::moveEast(){
-    double percent = _movementTime.elapsed() / (double)_msPerSquare;
-    int dist = percent * _parent->dimentions.getDrawTileSize();
-
-    movement.changeOffset(dist, 0);
-
-    if (_movementTime.elapsed() >= (_msPerSquare)){
-        stopMoving();
-    }
-}
-
-int Character::distanceToEnemy(QPoint start, QPoint end){
-    int distanceX = (abs(start.x() - end.x()));
-    int distanceY = (abs(start.y() - end.y()));
+int Character::distanceToEnemy(){
+    int distanceX = (abs(getEnd().x() - _target->getEnd().x()));
+    int distanceY = (abs(getEnd().y() - _target->getEnd().y()));
 
     distanceX += distanceX > 0 ? - 1 : 0;
     distanceY += distanceY > 0 ? - 1 : 0;
@@ -203,111 +80,18 @@ int Character::distanceToEnemy(QPoint start, QPoint end){
     return distanceX + distanceY;
 }
 
-bool withinChasing(QPoint start, QPoint end){
-    if (abs(start.x() - end.x()) < 9 &&
-            abs(start.y() - end.y()) < 7)
+bool Character::withinChasing(){
+    if (abs(getEnd().x() - _target->getEnd().x()) < 9 &&
+            abs(getEnd().y() - _target->getEnd().y()) < 7)
         return true;
     return false;
 }
 
-void Character::movementWonderAround(){
-    int speed = move((FacingDirection)(rand() % 4));
-    _followTimer->start(speed + rand() % 1000);
+void Character::playAnimation(int _msPerSquare){
+    _moveAnimation[(int)_direction]->play(_msPerSquare);
 }
 
-void Character::follow(){
-    if (_enemy){
-        if (!withinChasing(*this->getPos(), *_enemy->getPos()))
-            movementWonderAround();
-        int speed = move(_parent->findPath(this->getPos(), _enemy->getPos()));
-
-        if(distanceToEnemy(*this->getPos(), *_enemy->getPos()) > 0) {
-            if (speed < 0){ // No path!
-                movementWonderAround();
-            }
-                else{
-                _followTimer->start(speed + this->_moveUpdateInMS + 5);
-            }
-        }
-        if (distanceToEnemy(*this->getPos(), *_enemy->getPos()) == 0) { // Melee distance
-            meleeAttack(speed);
-        }
-    }
+void Character::stopAnimation(){
+    _moveAnimation[(int)_direction]->stop();
+    _moveAnimation[(int)_direction]->reset();
 }
-
-void Character::meleeAttack(int speed){
-}
-
-
-
-void Character::loadCharacterImages(QString character){
-    QPixmap temp;
-    int counter = 1;
-    while (temp.load(":/images/characters/" + character + "/north/" + QString::number(counter++) + ".png")){
-        movement._move[(int)FacingDirection::north].push_back(temp);
-    }
-    counter = 1;
-    while (temp.load(":/images/characters/" + character + "/west/" + QString::number(counter++) + ".png")){
-        movement._move[(int)FacingDirection::west].push_back(temp);
-    }
-    counter = 1;
-    while (temp.load(":/images/characters/" + character + "/south/" + QString::number(counter++) + ".png")){
-        movement._move[(int)FacingDirection::south].push_back(temp);
-    }
-    counter = 1;
-    while (temp.load(":/images/characters/" + character + "/east/" + QString::number(counter++) + ".png")){
-        movement._move[(int)FacingDirection::east].push_back(temp);
-    }
-}
-
-void Character::drawBox_Black(int x, int y, QPainter &painter, int avvika){
-    int penWidth = 6;
-    QPen pen;
-    pen.setWidth(penWidth);
-    painter.setPen(pen);
-
-    x += _drawTileSize;
-    y += _drawTileSize;
-
-    int xLeft = x + avvika;
-    int xRight = x + _drawTileSize - avvika - penWidth;
-    int yTop = y + avvika;
-    int yBottom = y  + _drawTileSize - avvika - penWidth;
-
-    painter.drawLine(xLeft, yTop, xRight, yTop);
-    painter.drawLine(xRight, yTop, xRight, yBottom);
-    painter.drawLine(xRight, yBottom, xLeft, yBottom);
-    painter.drawLine(xLeft, yBottom, xLeft, yTop);
-}
-
-void Character::drawBox_Red(int x, int y, QPainter &painter, int avvika){
-    int penWidth = 6;
-    QPen pen;
-    pen.setWidth(penWidth);
-    pen.setColor(qRgb(255,0,0));
-
-    painter.setPen(pen);
-
-    int xLeft = x + avvika;
-    int xRight = x + _drawTileSize - avvika - penWidth;
-    int yTop = y + avvika;
-    int yBottom = y + _drawTileSize - avvika - penWidth;
-
-    painter.drawLine(xLeft, yTop, xRight, yTop);
-    painter.drawLine(xRight, yTop, xRight, yBottom);
-    painter.drawLine(xRight, yBottom, xLeft, yBottom);
-    painter.drawLine(xLeft, yBottom, xLeft, yTop);
-
-    pen.setColor(qRgb(0,0,0));
-    painter.setPen(pen);
-}
-
-void Character::setFacingDirection(FacingDirection dir){
-    _facingDir = dir;
-    animateNextMovement();
-}
-
-void Character::setMovementAnimationInterval(int msPerSquare){
-    movement.setMovementAnimationInterval(msPerSquare / movement.getFramesPerSquare());
-}
-

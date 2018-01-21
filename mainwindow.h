@@ -1,13 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include "player.h"
-#include "enemy.h"
+#include "npc.h"
 #include "worldmap.h"
 class WorldMap;
 
+#include "gui.h"
+class GUI;
+
 #include "pathfinder.h"
 class PathFinder;
+
+
+#include "enums.h"
 
 #include <QMainWindow>
 #include <QString>
@@ -26,6 +33,10 @@ class PathFinder;
 
 
 #include <QDebug>
+
+#include "movement.h"
+class Movement;
+#include "image.h"
 
 
 class MainWindow : public QMainWindow{
@@ -62,9 +73,10 @@ public:
     private:
         int _orgTileSize = 100;
         int _drawTileSize;
-        double _mapZoom = 0.75;
+        double _mapZoom = 1;
     } dimentions;
 
+    /*
     struct Movement{
         Movement() {
             _screenCenter = QPoint(8, 4);
@@ -88,8 +100,8 @@ public:
             _screenPos->setY(y);
         }
         void followCharacterWithCamera(Character *character){
-            _screenPos = character->getPos();
-            _offset = character->movement.getOffset();
+            //_screenPos = character->getPos();
+            //_offset = character->movement.getOffset();
         }
 
         QPoint *getOffset(){
@@ -111,29 +123,35 @@ public:
         QPoint *_screenPos;
         QPoint *_offset;
     } movement;
+    */
+    QPoint _screenCenter {7, 5};
+    QPoint *_screenPos;
+    QPoint *_offset;
+
+    void followWithCamera(Character *character){
+        auto info = character->getPosReference();
+        _screenPos = std::get<0>(info);
+        _offset = std::get<1>(info);
+    }
 
     Character *getPlayer(){return _player;}
     WorldMap *getWorldMap(){return _theMap;}
     PathFinder *getPathfinder(){return _pathfinder;}
     int getSpeedPerTileForCharacter(Character *character);
-    int getSpeedPerTileForCharacter(QPoint pos, Character *character);
     void addCharacter(Character *newChar);
-    void addCharacter(QPoint *pos, Character *obj);
     void removeCharacter(Character *obj);
-    void removeCharacter(QPoint *pos, Character *obj);
 
-    FacingDirection findPath(QPoint *startPos,  QPoint *endPos);
+    FacingDirection findPath(QPoint startPos,  QPoint endPos);
     bool valid(QPoint &pos);
     bool valid(QPoint *pos);
     bool valid(int x, int y);
 
-    bool isWalkable(QPoint pos);
-    bool isWalkable(int x, int y);
 private:
     QTimer *_FPSTimer;
     QElapsedTimer _keyPressElapsedTimer;
 
     WorldMap *_theMap;
+    GUI *_GUI;
 
     Character *_player;
     Character *_enemy;
