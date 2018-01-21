@@ -19,7 +19,9 @@ class WorldMap;
 
 class Tile{
 public:
-    Tile();
+    Tile(QPixmap *image = nullptr);
+    Tile(QPoint pos, QPixmap *image = nullptr);
+    Tile(int x, int y, QPixmap *image = nullptr);
     void init();
 
     void setTileImg(QPixmap *img);
@@ -29,6 +31,8 @@ public:
     bool hasCharacter(Character *character);
 
     double getTileSpeed(int speed);
+    QPoint getPos(){return _pos;}
+    void setPos(QPoint pos){_pos = pos;}
 
     void drawTile(QPoint &pos, double mapZoom, QPainter &painter);
 
@@ -38,9 +42,13 @@ public:
     int getTileGarvity();
     bool hasCreature();
 
-    bool isBusy(){return _isBusy;}
-    void addIsBusy(){_isBusy++;}
-    void removeIsBusy(){_isBusy--;}
+    bool isBusy(){
+        for (int i = 0; i < _characters.size(); i++){
+            if (_characters[i]->getEnd() == this->_pos)
+                return true;
+        }
+        return false;
+    }
 
 private:
     QPixmap *_tileImg;
@@ -49,7 +57,7 @@ private:
     bool _isWalkable = true;
     int _isBusy = 0;
     TileSpeed _tileGravity;
-
+    QPoint _pos;
 };
 
 #endif // TILE_H

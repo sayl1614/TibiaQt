@@ -39,34 +39,48 @@ void Movement::changeOffset(int x, int y){
     _offset.setY(_offset.y() + y);
 }
 
-
 void Movement::follow(){
     if (_character->hasTarget()){
         _followTimer->stop();
+        // If too far away
         if (!_character->withinChasing()){
             _state = State::none;
-            _character->noPath(true); // Too far away
-            _followTimer->start(500);
+            _followTimer->start(500); // Too far away
+            _character->noPath(true);
             return;
         }
-        if (_character->distanceToEnemy() == 0){ // Melee distance
-            _state = State::none;
-            _character->meleeAttack();
+        else if (_character->distanceToEnemy() == 0){ // Still in melee distance
             _followTimer->start(2000);
+            if (_character->targetIsHostile())
+                _character->meleeAttack();
+            _runExhausted = true;
             return;
         }
 
-        move(_character->findPath());
-        if(_character->distanceToEnemy() > 0) {
-            if (!this->isMoving()){ // No path!
+        FacingDirection direction = _character->findPath();
+
+        if (direction == FacingDirection::notFound){// No path!
+            _state = State::none;
+            _character->noPath();
+            return;
+        }
+        move(direction);
+
+        if(_character->distanceToEnemy() > 0) { // Still not within melee
+            if (isMoving()){ // continue following
+                return;
+            }
+        }
+        else{ // Just arrived at melee distance
+            if (_character->targetIsHostile()){
+                _followTimer->start(2000);
+                if (_character->targetIsHostile())
+                    _character->meleeAttack();
+                _runExhausted = true;
                 _state = State::none;
-                _character->noPath();
-                _followTimer->start(_msPerSquare  * 2);
             }
-            else{ // follow
-                _state = State::following;
-                //_followTimer->start(speed + 25);
-            }
+            else
+                _followTimer->start(500);
         }
         return;
     }
@@ -78,7 +92,6 @@ void Movement::move(FacingDirection direction){
     _msPerSquare = worldMap->getSpeedPerTileForCharacter(_character);
 
     if (direction == FacingDirection::notFound){
-        _state = State::none;
         return;
     }
     for (int i = 0; i < _moveInterval.size(); i++){
@@ -86,6 +99,7 @@ void Movement::move(FacingDirection direction){
             return;
         }
     }
+    _runExhausted = false;
     switch (direction) {
     case FacingDirection::north:
         changeNext(0, -1);
@@ -127,8 +141,7 @@ void Movement::move(FacingDirection direction){
     if (!isMoving())
         _state = State::moving;
 
-    worldMap->removeIsBusy(_character);
-    worldMap->addIsBusy(_character);
+    worldMap->addCharacter(_character);
 
     _moveInterval[(int)direction]->start(_moveUpdateInMS);
     _character->playAnimation(_msPerSquare);
@@ -197,19 +210,25 @@ void Movement::moveEast(){
 }
 
 void Movement::stopMoving(){
+    setOffset(0, 0);
     for (int i = 0; i < _moveInterval.size(); i++){
         if (_moveInterval[i]->isActive()){
             _moveInterval[i]->stop();
         }
     }
     WorldMap *worldMap = _character->getWorldMap();
-    worldMap->addCharacter(_character);
     worldMap->removeCharacter(_character);
     _start = _next;
 
-    setOffset(0, 0);
-    if (_state == State::following)
-        follow();
+    if (_isFollowing){
+        if (!isMoving() || _runExhausted){
+            _state = State::none;
+            _character->stopAnimation();
+            return;
+        }
+        if (!_followTimer->isActive())
+            follow();
+    }
     else{
         _state = State::none;
         _character->stopAnimation();
@@ -221,7 +240,7 @@ int Movement::movementWonderAround(){
     FacingDirection direction = (FacingDirection)(rand() % 4);
     move(direction);
     if (_character->isMoving())
-        _followTimer->start(_msPerSquare * 2);
+        _followTimer->start(_msPerSquare * 3);
     else
         _followTimer->start(_msPerSquare + 25);
 }

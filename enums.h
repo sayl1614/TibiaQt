@@ -4,7 +4,6 @@
 enum class State{
     none,
     moving,
-    following,
     sleeping,
     eating
 };

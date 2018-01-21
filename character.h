@@ -48,9 +48,9 @@ public:
 
     // Combat
     bool hasTarget(){return (bool)_target;}
+    bool targetIsHostile(){return _isHostile;}
     Character *getTarget(){return _target;}
     virtual void meleeAttack() = 0;
-
 
     virtual void playAnimation(int _msPerSquare);
     virtual void stopAnimation();
@@ -61,7 +61,14 @@ public:
 
     virtual void draw(int x, int y, QPainter &painter);
 
-    virtual ~Character(){}
+    virtual ~Character(){
+        // Remove when dynamic!!
+        while (_moveAnimation.size()){
+            delete _moveAnimation[_moveAnimation.size() - 1];
+            _moveAnimation.pop_back();
+        }
+        delete _movement;
+    }
 protected slots:
 
 protected:
@@ -70,12 +77,12 @@ protected:
     MainWindow *_parent;
 
     Character *_target;
+    bool _isHostile = true;
 
     int _framesPerSquare = 8;
     QVector<Image*> _moveAnimation;
     FacingDirection _direction {FacingDirection::south};
     Movement *_movement;
-
 
     int _drawOffset;
 };

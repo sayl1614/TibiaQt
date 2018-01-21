@@ -28,7 +28,6 @@ public:
 
     void init();
 
-
     QPoint getStart(){return _start;}
     QPoint *getStartRef(){return &_start;}
     void setStart(QPoint pos){_start = pos;}
@@ -41,6 +40,9 @@ public:
     void setOffset(int x, int y){setOffset(QPoint(x, y));}
     void changeOffset(int x, int y);
 
+    void setState(State state){_state = state;}
+    void setFollowing(bool value){_isFollowing = value;}
+
     int movementWonderAround();
 
     int getSpeed(){return _speed;}
@@ -48,7 +50,7 @@ public:
 
 
     void move(FacingDirection direction);
-    bool isMoving(){return _state == State::moving || _state == State::following;}
+    bool isMoving(){return _state == State::moving;}
     void stopMoving();
 
     ~Movement(){}
@@ -67,6 +69,9 @@ private:
     QPoint _offset {0, 0};
 
     State _state;
+    bool _isFollowing = false;
+    bool _runExhausted = false;
+
     int _speed;
 public slots:
     void follow();

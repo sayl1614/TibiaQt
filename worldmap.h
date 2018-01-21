@@ -39,8 +39,6 @@ public:
     Tile *getTile(int indx1, int indx2);
     Tile *getTile(QPoint point);
 
-    void addIsBusy(Character *target);
-    void removeIsBusy(Character *target);
     bool isBusy(int x, int y);
     bool isBusy(QPoint pos);
 

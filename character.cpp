@@ -66,6 +66,7 @@ FacingDirection Character::findPath(QPoint pos){
 
 void Character::follow(Character *target){
     _target = target;
+    _movement->setFollowing(true);
     _movement->follow();
 }
 

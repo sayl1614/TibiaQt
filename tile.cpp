@@ -1,9 +1,22 @@
 #include "tile.h"
 
-Tile::Tile() :
-    _tileImg(nullptr){
+Tile::Tile(QPixmap *image) :
+    _tileImg(image){
     init();
 }
+
+Tile::Tile(QPoint pos, QPixmap *image) :
+    _pos(pos), _tileImg(image){
+    init();
+}
+
+Tile::Tile(int x, int y, QPixmap *image) :
+    _tileImg(image){
+    _pos.setX(x);
+    _pos.setY(y);
+    init();
+}
+
 void Tile::init(){
     _isWalkable = true;
     _tileGravity = TileSpeed::medium;
@@ -90,5 +103,6 @@ void Tile::drawTile(int x, int y, double mapZoom, QPainter &painter){
 }
 void Tile::drawCharacters(int x, int y, QPainter &painter){
     for (int i = 0; i < _characters.size(); i++)
-        _characters[i]->draw(x, y ,painter);
+        if (_characters[i]->getStart() == this->_pos)
+            _characters[i]->draw(x, y ,painter);
 }

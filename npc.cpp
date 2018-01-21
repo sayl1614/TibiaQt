@@ -21,12 +21,11 @@ void NPC::noPath(bool tooFarAway){
     if (tooFarAway){
         return;
     }
-    int speed = _movement->movementWonderAround();
+    _movement->movementWonderAround();
 }
 
-void NPC::attack(Character *enemy)
-{
-
+void NPC::attack(Character *enemy){
+    _isHostile = true;
 }
 
 void NPC::meleeAttack(){
@@ -34,7 +33,11 @@ void NPC::meleeAttack(){
     // Do an attack inbetween
 
     // Do an attack inbetween
-    bool moveNext = rand() % 100 < 33; // 25% chance to move
+
+    if (isMoving())
+        return;
+
+    bool moveNext = rand() % 100 < 33; // 33% chance to move
 
     if (this->getEnd().x() < _target->getEnd().x()) { // west of target
         int direction = (int)rand() % 2;
@@ -57,7 +60,6 @@ void NPC::meleeAttack(){
                 else
                     move(FacingDirection::south);
             }
-
             if (!isMoving()) {    // failed
                 face(FacingDirection::east);
             }

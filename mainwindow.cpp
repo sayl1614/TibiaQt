@@ -17,10 +17,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->_pathfinder = new PathFinder(this, _theMap);
     _GUI = new GUI(this, _theMap->getMap());
 
-    for (int i = 0; i < 2; i++){
+    for (int i = 0; i < 5; i++){
         Character *temp = new NPC("demon", this, _player);
         _theMap->addCharacter(temp);
-        _theMap->addIsBusy(temp);
     }
 }
 

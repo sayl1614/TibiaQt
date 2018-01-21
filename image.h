@@ -25,9 +25,11 @@ public:
     void reloadImage(QString path);
 
     int getWidth();
-
-    ~Image();
     void loadImage(QString item);
+
+    ~Image(){
+        delete _playInterval;
+    }
 private:
     // This attribute is per-object sensitive
     int _animationInterval;

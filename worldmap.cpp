@@ -6,13 +6,13 @@ WorldMap::WorldMap(MainWindow *parent) :
     _theMap.resize(_mapHeight);
     for (int y = 0; y < _mapHeight; y++){
         for (int x = 0; x < _mapWidth; x++){
-            _theMap[x].push_back(new Tile());
+            _theMap[x].push_back(new Tile(x, y));
             _theMap[x][y]->setTileImg(first);
         }
     }
     if (_parent->getPlayer()){
         _player = _parent->getPlayer();
-        //_theMap[_player->getEnd().x()][_player->getEnd().y()]->addCharacter(_player);
+        _theMap[_player->getEnd().x()][_player->getEnd().y()]->addCharacter(_player);
     }
     /**/
 
@@ -55,13 +55,6 @@ Tile *WorldMap::getTile(QPoint point){
     return getTile(point.x(), point.y());
 }
 
-void WorldMap::addIsBusy(Character *target){
-    return _theMap[target->getEnd().x()][target->getEnd().y()]->addIsBusy();
-}
-
-void WorldMap::removeIsBusy(Character *target){
-    return _theMap[target->getStart().x()][target->getStart().y()]->removeIsBusy();
-}
 
 bool WorldMap::isBusy(QPoint pos){
     return isBusy(pos.x(), pos.y());

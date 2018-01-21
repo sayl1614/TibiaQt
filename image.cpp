@@ -58,7 +58,3 @@ void Image::nextImage(){
     if (++_currentImage >= _image.size())
         _currentImage = _image.size() > 2 ? 1 : 0;
 }
-
-Image::~Image(){
-    delete _playInterval;
-}
