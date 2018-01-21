@@ -74,6 +74,8 @@ void Movement::follow(){
             if (isMoving()){ // continue following
                 return;
             }
+            else
+                return;
         }
         else{ // Just arrived at melee distance
             if (_character->targetIsHostile()){
