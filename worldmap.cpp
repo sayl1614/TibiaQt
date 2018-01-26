@@ -6,18 +6,19 @@
 WorldMap::WorldMap(MainWindow *parent) :
     _parent(parent){
     srand(time(NULL));
-    QPixmap *firstImage = new QPixmap(":/images/tiles/green.png");
-    QPixmap *secondImage = new QPixmap(":/images/tiles/red.png");
+    QPixmap *firstImage = new QPixmap(":/images/tiles/1.png");
+    QPixmap *secondImage = new QPixmap(":/images/tiles/green.png");
+    QPixmap *thirdImage = new QPixmap(":/images/tiles/red.png");
     _theMap.resize(_mapHeight);
     for (int y = 0; y < _mapHeight; y++){
         for (int x = 0; x < _mapWidth; x++){
-            int random = rand() % 2;
-            if (random == 0){
+            int randoms = rand() % 3;
+            if (randoms == 0)
                 _theMap[x].push_back(new Tile(x, y, firstImage, 100));
-            }
-            else{
-                _theMap[x].push_back(new Tile(x, y, secondImage, 500));
-            }
+            else if (randoms == 1)
+                _theMap[x].push_back(new Tile(x, y, secondImage, 300));
+            else
+                _theMap[x].push_back(new Tile(x, y, thirdImage, 500));
         }
     }
     if (_parent->getPlayer()){
@@ -265,16 +266,16 @@ void WorldMap::drawMap(QPainter &painter){
 
     // Draw characters
     indexPosY = getIndexPos('y');
-
     for (int drawYPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->y(); drawYPos < 850; drawYPos += _parent->dimentions.getDrawTileSize(), indexPosY++){
         if (indexPosY < 0 || indexPosY >= _mapHeight)
             continue;
 
         int indexPosX = getIndexPos('x');
-
         for (int drawXPos = -_parent->dimentions.getDrawTileSize() - _parent->_offset->x(); drawXPos < 1500; drawXPos += _parent->dimentions.getDrawTileSize(), indexPosX++){
             if (indexPosX < 0 || indexPosX >= _mapWidth)
                 continue;
+
+
 
             _theMap[indexPosX][indexPosY]->drawCharacters(drawXPos, drawYPos, painter);
         }

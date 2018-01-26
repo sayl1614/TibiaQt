@@ -20,9 +20,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     _enemy = new NPC("demon", this, nullptr, 150);
     _theMap->addCharacter(_enemy);
 
-    for (int i = 0; i < 0; i++){
-        Character *temp = new NPC("demon", this, _player);
-        _theMap->addCharacter(temp);
+    for (int i = 0; i < 20; i++){
+        _theMap->addCharacter(new NPC("demon", this, _player));
     }
 }
 
@@ -77,7 +76,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
         _pathfinder->pathfinderBiDirectional(_player->getEnd(), _enemy->getEnd(), true);
         break;
     case Qt::Key_M:{
-        FacingDirection direction = _pathfinder->pathfinderSingleDirectional(_player->getEnd(),
+        FacingDirection direction = _pathfinder->pathfinderBiDirectional(_player->getEnd(),
                                                                          _enemy->getEnd());
         if (direction != FacingDirection::notFound && !_player->isMoving())
             _player->move(direction);

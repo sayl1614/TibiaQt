@@ -11,8 +11,8 @@ void Image::init(){
 }
 
 void Image::draw(int x, int y, double zoom, QPainter &painter){
-    zoom = zoom * _imageSize;
-    painter.drawPixmap(x, y, zoom, zoom, _image[_currentImage]);
+    double drawSize = zoom * _imageSize;
+    painter.drawPixmap(x, y, drawSize, drawSize, _image[_currentImage]);
 }
 
 void Image::loadImage(QString path){

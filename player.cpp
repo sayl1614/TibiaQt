@@ -27,17 +27,10 @@ void Player::noPath(bool tooFarAway){
 }
 
 void Player::draw(int x, int y, QPainter &painter){
-    /*
-    painter.drawPixmap( x - _drawOffset + movement.getOffsetX(),
-                        y - _drawOffset + movement.getOffsetY(),
-                        _drawCharacterSize, _drawCharacterSize, *_movementImages[]);
-
-
-    _movementImages[movement.getAnimationIndex()]->draw(x, y, _parent->dimentions.getMapZoom(), painter);
-    */
-    _moveAnimation[(int)_direction]->draw(x - _drawOffset + _movement->getOffset().x(),
-                                          y - _drawOffset + _movement->getOffset().y(),
-                                          _parent->dimentions.getMapZoom(), painter);
+    double mapZoom = _parent->dimentions.getMapZoom();
+    _moveAnimation[(int)_direction]->draw(x - (_drawOffset * mapZoom) + _movement->getOffset().x(),
+                                          y - (_drawOffset * mapZoom) + _movement->getOffset().y(),
+                                          mapZoom, painter);
 }
 
 

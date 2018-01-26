@@ -63,9 +63,7 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
         direction = findClosestPath(&_from, _endNode, _prioFirst, debugMode); // Primary search
         if (direction != FacingDirection::continueToNext)
             return direction;
-        if (!_currNode)
             direction = findClosestPath(&_to, _startNode, _prioEnd, debugMode); // Secondary search
-
         if (debugMode)
             break;
     }
@@ -74,9 +72,10 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
 void PathFinder::initialStage(Node *startNode, Node *endNode, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
     _currNode = new Node(startNode->_pos);
     double tileGravity = _theMap->getTile(_currNode->_pos)->getTileGarvity();
-    _currNode->_g = -tileGravity;
+    _currNode->_g = -1;
 
     _currNode->calculateNodePos(endNode, _currNode, tileGravity);
+    _adjacent = _currNode;
     _prio.push(_currNode);
     _grid[(_currNode->_pos.x())][_currNode->_pos.y()] = _currNode;
 }
@@ -84,15 +83,16 @@ void PathFinder::initialStage(Node *startNode, Node *endNode, std::priority_queu
 FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio, bool debugMode){
     while(true){
         if (_prio.empty()){
-            if (_childNode && me == &_to){
-                return FacingDirection::notFound;
+            if (_currNode->_foundPath){
+                if (me == &_to)
+                    return FacingDirection::continueToNext;
             }
-            else{
-                clearMemory();
+            else
                 return FacingDirection::notFound;
-            }
         }
         while (_prio.size()){
+            if (_currNode->_foundPath)
+                break;
             if (_prio.top()->_closed == true){
                 _prio.pop();
                 continue;
@@ -110,12 +110,9 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
         distanceY += distanceY > 0 ? - 1 : 0;
 
         // Found path!
-        if (!(distanceX + distanceY) || _childNode){
-            _currNode->_closed = false;
-            if (me != &_from)
+        if (!(distanceX + distanceY) || _currNode->_foundPath){
+            if (me == &_to)
                 return FacingDirection::continueToNext;
-            if (_childNode)
-                _currNode = _childNode;
             while(_currNode->_parentNode->_parentNode != _currNode->_parentNode){
                 _currNode = _currNode->_parentNode;
             }
@@ -128,69 +125,82 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
         if (prioVertital){
             // North node
             addNode(me, goalNode, gravityMultiplier, (_currNode->_pos.x()), (_currNode->_pos.y() - 1), _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // South node
             addNode(me, goalNode, gravityMultiplier, (_currNode->_pos.x()), _currNode->_pos.y() + 1, _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // West node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // East node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
         }
         else{
             // West node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // East node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // North node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x(), _currNode->_pos.y() - 1, _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
             // South node
             addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x(), _currNode->_pos.y() + 1, _prio);
-            if (_childNode){
+            if (_adjacent->_foundPath){
+                _currNode = _adjacent;
                 continue;
             }
         }
+        /*
         gravityMultiplier = 2;
         // North west
         addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y() - 1, _prio);
-        if (_childNode){
+        if (_adjacent->_foundPath){
+            _currNode = _adjacent;
             continue;
         }
         // North East
         addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y() - 1, _prio);
-        if (_childNode){
+        if (_adjacent->_foundPath){
+            _currNode = _adjacent;
             continue;
         }
         // South west
         addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y() + 1, _prio);
-        if (_childNode){
+        if (_adjacent->_foundPath){
+            _currNode = _adjacent;
             continue;
         }
         // South east
         addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y() + 1, _prio);
-        if (_childNode){
+        if (_adjacent->_foundPath){
+            _currNode = _adjacent;
             continue;
         }
-        _currNode = nullptr;
+        */
         return FacingDirection::continueToNext;
     }
 }
@@ -200,46 +210,45 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
 void PathFinder::addNode(bool *me, Node *goalNode, int gravityMultiplier, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
     if (!_theMap->isWalkable(x, y))
         return;
-    _childNode = _grid[x][y];
+    _adjacent = _grid[x][y];
     int gravity = _theMap->getTile(QPoint(x, y))->getTileGarvity() * gravityMultiplier;
-    if (_childNode == nullptr){
-        _childNode = new Node(x, y);
-        _childNode->calculateNodePos(goalNode, _currNode, gravity);
-        _childNode->_latestVisitor = me;
-        _prio.push(_childNode);
-        _grid[x][y] = _childNode;
+    if (_adjacent == nullptr){
+        _adjacent = new Node(x, y);
+        _adjacent->calculateNodePos(goalNode, _currNode, gravity);
+        _adjacent->_latestVisitor = me;
+        _prio.push(_adjacent);
+        _grid[x][y] = _adjacent;
     }
-    else if(!_childNode->_closed) {
-        if (_childNode->_latestVisitor == me) {
-            int oldF = _childNode->_f;
-            int oldG = _childNode->_g;
-            int oldH = _childNode->_h;
-            Node *parent = _childNode->_parentNode;
+    else if(!_adjacent->_closed) {
+        if (_adjacent->_latestVisitor == me) {
+            int oldF = _adjacent->_f;
+            int oldG = _adjacent->_g;
+            int oldH = _adjacent->_h;
+            Node *parent = _adjacent->_parentNode;
 
-            _childNode->calculateNodePos(goalNode, _currNode, gravity);
-            if (oldF > _childNode->_f){
-                _prio.push(_childNode);
-                _grid[x][y] = _childNode;
+            _adjacent->calculateNodePos(goalNode, _currNode, gravity);
+            if (oldF > _adjacent->_f){
+                _prio.push(_adjacent);
+                _grid[x][y] = _adjacent;
             }
             else{
-                _childNode->_f = oldF;
-                _childNode->_g = oldG;
-                _childNode->_h = oldH;
-                _childNode->_parentNode = parent;
+                _adjacent->_f = oldF;
+                _adjacent->_g = oldG;
+                _adjacent->_h = oldH;
+                _adjacent->_parentNode = parent;
             }
         }
         else{ // Found!
             if (me == &_from){
-                _childNode->_foundPath = true;
-                _childNode->calculateNodePos(goalNode, _currNode, gravity);
+                _adjacent->_foundPath = true;
+                _adjacent->calculateNodePos(goalNode, _currNode, gravity);
             }
             else if (me == &_to){
-                _childNode->_foundPath = true;
+                _adjacent->_foundPath = true;
             }
             return;
         }
     }
-    _childNode = nullptr;
 }
 
 FacingDirection PathFinder::getDirection(QPoint &start, QPoint &next){
@@ -295,7 +304,7 @@ void PathFinder::clearMemory(){
     _currNode = nullptr;
     _startNode = nullptr;
     _endNode = nullptr;
-    _childNode = nullptr;
+    _adjacent = nullptr;
 }
 
 void PathFinder::resetGrid(){

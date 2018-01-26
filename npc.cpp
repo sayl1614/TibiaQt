@@ -6,14 +6,15 @@ NPC::NPC(QString character, MainWindow *parent, Character *enemy, int speed) :
     Character(character, parent, speed){
     _target = enemy;
     if (_target){
-        follow(_target);
+        _movement->setFollowing(true);
     }
 }
 
 void NPC::draw(int x, int y, QPainter &painter){
-    _moveAnimation[(int)_direction]->draw(x - _drawOffset + _movement->getOffset().x(),
-                                          y - _drawOffset + _movement->getOffset().y(),
-                                          _parent->dimentions.getMapZoom(), painter);
+    double mapZoom = _parent->dimentions.getMapZoom();
+    _moveAnimation[(int)_direction]->draw(x - (_drawOffset * mapZoom)  + _movement->getOffset().x(),
+                                          y - (_drawOffset * mapZoom)  + _movement->getOffset().y(),
+                                          mapZoom, painter);
 }
 
 void NPC::noPath(bool tooFarAway){

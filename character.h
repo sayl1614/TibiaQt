@@ -36,7 +36,7 @@ public:
     virtual FacingDirection findPath();
     virtual FacingDirection findPath(Character *target);
     virtual FacingDirection findPath(QPoint pos);
-    void follow(Character *target);
+    void follow(Character *target = nullptr);
     void setState(State state){_movement->setState(state);}
 
     int distanceToEnemy();

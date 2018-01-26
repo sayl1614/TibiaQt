@@ -76,12 +76,14 @@ public:
         void calculateNodePos(Node *endNode, Node *currNode, int gravity){
             this->_parentNode = currNode;
 
+            gravity /= 100;
+
             int distanceX = (abs(_pos.x() - endNode->_pos.x()));
             distanceX += distanceX > 0 ? - 1 : 0;
             int distanceY = (abs(_pos.y() - endNode->_pos.y()));
             distanceY += distanceY > 0 ? - 1 : 0;
 
-            /**/
+            /*
             // Diagonal calculation of H
             int diagonal;
             if (distanceX < distanceX)
@@ -95,7 +97,7 @@ public:
             _h = totalGravity;
             /**/
 
-            //_h = (distanceX + distanceY) * gravity;
+            _h = distanceX + distanceY;
             _g = gravity  + currNode->_g;
             _f = _g + _h;
         }
@@ -136,7 +138,7 @@ public:
     FacingDirection pathfinderBiDirectional(QPoint first, QPoint second, bool debugMode = false);
 
     Node *_currNode = nullptr;
-    Node *_childNode = nullptr;
+    Node *_adjacent = nullptr;
 
     Node *_startNode = nullptr;
     Node *_endNode = nullptr;
