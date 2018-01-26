@@ -70,6 +70,7 @@ public:
         }
         delete _movement;
     }
+    void toggleFollow();
 protected slots:
 
 protected:

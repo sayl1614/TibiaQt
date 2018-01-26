@@ -19,10 +19,10 @@ class WorldMap;
 
 class Tile{
 public:
-    Tile(QPixmap *image = nullptr);
-    Tile(QPoint pos, QPixmap *image = nullptr);
-    Tile(int x, int y, QPixmap *image = nullptr);
-    void init();
+    Tile(QPixmap *image = nullptr, int tileWalkingTime = 100);
+    Tile(QPoint pos, QPixmap *image = nullptr, int tileWalkingTime = 100);
+    Tile(int x, int y, QPixmap *image = nullptr, int tileWalkingTime = 100);
+    void init(int tileWalkingTime = 100);
 
     void setTileImg(QPixmap *img);
     void addCharacter(Character *newChar);
@@ -56,7 +56,7 @@ private:
 
     bool _isWalkable = true;
     int _isBusy = 0;
-    TileSpeed _tileGravity;
+    TileSpeed _tileWalkingTime;
     QPoint _pos;
 };
 

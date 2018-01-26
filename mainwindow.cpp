@@ -17,13 +17,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->_pathfinder = new PathFinder(this, _theMap);
     _GUI = new GUI(this, _theMap->getMap());
 
-    for (int i = 0; i < 10; i++){
+    _enemy = new NPC("demon", this, nullptr, 150);
+    _theMap->addCharacter(_enemy);
+
+    for (int i = 0; i < 0; i++){
         Character *temp = new NPC("demon", this, _player);
         _theMap->addCharacter(temp);
     }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
+    switch(event->key()){
+        case Qt::Key_Control:
+            _ctrlPressed = true;
+            break;
+        case Qt::Key_Alt:
+            _altPressed = true;
+            break;
+    }
+
     switch(event->key()){
     case Qt::Key_Up:
         //_theMap->move(FacingDirection::north);
@@ -38,11 +50,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     case Qt::Key_Right:
         _player->move(FacingDirection::east);
         break;
-    }
-    /*
-    switch(event->key()){
     case Qt::Key_F:{
-            _enemy->attack(_player);
+            _enemy->follow(_player);
+            break;
         }
     case Qt::Key_Plus:
         if (dimentions.getMapZoom() < 4.5){
@@ -61,29 +71,30 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
         }
         break;
     case Qt::Key_P:
-        _pathfinder->pathfinderSingleDirectional(_player->getPos(), QPoint(5, 5), true);
+        _pathfinder->pathfinderSingleDirectional(_player->getEnd(), _enemy->getEnd(), true);
         break;
     case Qt::Key_B:
-        _pathfinder->pathfinderBiDirectional(_player->getPos(), QPoint(5, 5), true);
+        _pathfinder->pathfinderBiDirectional(_player->getEnd(), _enemy->getEnd(), true);
         break;
     case Qt::Key_M:{
-        FacingDirection direction = _pathfinder->pathfinderBiDirectional(_player->getPos(), QPoint(20, 20));
+        FacingDirection direction = _pathfinder->pathfinderSingleDirectional(_player->getEnd(),
+                                                                         _enemy->getEnd());
         if (direction != FacingDirection::notFound && !_player->isMoving())
             _player->move(direction);
         break;
-    }
-    */
-    switch(event->key()){
-    case Qt::Key_Control:
-        _ctrlPressed = true;
-        break;
-    case Qt::Key_Alt:
-        _altPressed = true;
-        break;
+        }
     }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event){
+    switch(event->key()){
+        case Qt::Key_Control:
+            _ctrlPressed = false;
+            break;
+        case Qt::Key_Alt:
+            _altPressed = false;
+            break;
+    }
 }
 
 
@@ -145,7 +156,7 @@ void MainWindow::paintEvent(QPaintEvent *e){
 
     _theMap->drawMap(painter);
     //_GUI->drawMap(painter);
-    //_pathfinder->draw(painter);
+    _pathfinder->draw(painter);
 }
 
 

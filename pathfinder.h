@@ -81,7 +81,8 @@ public:
             int distanceY = (abs(_pos.y() - endNode->_pos.y()));
             distanceY += distanceY > 0 ? - 1 : 0;
 
-            /*
+            /**/
+            // Diagonal calculation of H
             int diagonal;
             if (distanceX < distanceX)
                 diagonal = distanceX;
@@ -90,11 +91,11 @@ public:
 
             int straight = abs(distanceX - distanceY);
 
-            int totalGravity = straight * 10 + diagonal * 30;
+            int totalGravity = straight + diagonal * 2;
             _h = totalGravity;
             /**/
 
-            _h = (distanceX + distanceY) * gravity;
+            //_h = (distanceX + distanceY) * gravity;
             _g = gravity  + currNode->_g;
             _f = _g + _h;
         }
@@ -157,7 +158,7 @@ protected:
     FacingDirection findClosestPath(bool *me, Node *endNode,std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio, bool debugMode = false);
 
 
-    void addNode(bool *me, Node *_endNode, int gravity, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio);
+    void addNode(bool *me, Node *_endNode, int gravityMultiplier, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio);
     void resetGrid();
     void clearMemory();
 

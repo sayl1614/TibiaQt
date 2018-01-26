@@ -39,12 +39,13 @@ void Movement::changeOffset(int x, int y){
     _offset.setY(_offset.y() + y);
 }
 
-void Movement::meleeDistance(){
-    _followTimer->start(2000);
-    if (_character->targetIsHostile()){
-        _character->meleeAttack();
-        _runExhausted = true;
-    }
+void Movement::meleeAttack(){
+    _character->meleeAttack();
+    int nextAttack = 2000;
+    if (_msPerSquare > 2000)
+        nextAttack = _msPerSquare;
+    _followTimer->start(nextAttack);
+    _runExhausted = true;
 }
 
 void Movement::follow(){
@@ -57,8 +58,9 @@ void Movement::follow(){
             return;
         }
         else if (_character->distanceToEnemy() == 0){ // Still in melee distance
+            if (_character->targetIsHostile())
+                meleeAttack();
             _state = State::none;
-            meleeDistance();
             return;
         }
 
@@ -79,13 +81,15 @@ void Movement::follow(){
         }
         else{ // Just arrived at melee distance
             if (_character->targetIsHostile()){
-                meleeDistance();
+                meleeAttack();
             }
-            else
+            else // Continue following
                 _followTimer->start(500);
         }
         return;
     }
+    if (_followTimer->isActive())
+        _followTimer->stop();
     assert(!_followTimer->isActive());
 }
 
@@ -146,6 +150,7 @@ void Movement::move(FacingDirection direction){
     worldMap->addCharacter(_character);
 
     _moveInterval[(int)direction]->start(_moveUpdateInMS);
+    _msPerSquare = worldMap->getSpeedPerTileForCharacter(_character);
     _character->playAnimation(_msPerSquare);
 
     _timeSpentMoving->restart();

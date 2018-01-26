@@ -18,11 +18,11 @@ enum class FacingDirection{
 
 
 enum class TileSpeed{
-    verySlow,
-    slow,
-    medium,
-    fast,
-    veryFast
+    verySlow = 70,
+    slow = 90,
+    medium = 100,
+    fast = 160,
+    veryFast = 500
 };
 
 #endif // ENUMS_H

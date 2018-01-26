@@ -54,7 +54,7 @@ public:
     void stopMoving();
 
     ~Movement(){}
-    void meleeDistance();
+    void meleeAttack();
 private:
     Character *_character;
 

@@ -1,25 +1,25 @@
 #include "tile.h"
 
-Tile::Tile(QPixmap *image) :
+Tile::Tile(QPixmap *image, int tileWalkingTime) :
     _tileImg(image){
-    init();
+    init(tileWalkingTime);
 }
 
-Tile::Tile(QPoint pos, QPixmap *image) :
+Tile::Tile(QPoint pos, QPixmap *image, int tileWalkingTime) :
     _pos(pos), _tileImg(image){
-    init();
+    init(tileWalkingTime);
 }
 
-Tile::Tile(int x, int y, QPixmap *image) :
+Tile::Tile(int x, int y, QPixmap *image, int tileWalkingTime) :
     _tileImg(image){
     _pos.setX(x);
     _pos.setY(y);
-    init();
+    init(tileWalkingTime);
 }
 
-void Tile::init(){
+void Tile::init(int tileWalkingTime){
     _isWalkable = true;
-    _tileGravity = TileSpeed::medium;
+    _tileWalkingTime = (TileSpeed)tileWalkingTime;
 }
 
 void Tile::setTileImg(QPixmap *tileImg){
@@ -42,9 +42,10 @@ bool Tile::isWalkable(){return _isWalkable;}
 
 bool Tile::hasCreature(){
     for (int i = 0; i < _characters.size(); i++){
-        //if (_characters[i]->isMoving());
+        if (_characters[i]->getEnd() == _pos)
+            return true;
     }
-    return _characters.size() > 0;
+    return false;
 }
 
 
@@ -58,41 +59,12 @@ bool Tile::hasCharacter(Character *character){
 }
 
 int Tile::getTileGarvity(){
-    switch ((int)_tileGravity) {
-    case (int)TileSpeed::verySlow:
-        return 1000 - 119;
-    case (int)TileSpeed::slow:
-        return 1000 - 400;
-    case (int)TileSpeed::medium:
-        return 1000 - 600;
-    case (int)TileSpeed::fast:
-        return 1000 - 667;
-    case (int)TileSpeed::veryFast:
-        return 1000 - 857;
-    }
+    return (int)_tileWalkingTime;
 }
 
 // Returns ms per tile
 double Tile::getTileSpeed(int speed){
-    double multiplier;
-    switch ((int)_tileGravity) {
-    case (int)TileSpeed::verySlow:
-        multiplier = 0.119;
-        break;
-    case (int)TileSpeed::slow:
-        multiplier = 0.4;
-        break;
-    case (int)TileSpeed::medium:
-        multiplier = 0.6;
-        break;
-    case (int)TileSpeed::fast:
-        multiplier = 0.667;
-        break;
-    case (int)TileSpeed::veryFast:
-        multiplier = 0.857;
-        break;
-    }
-    return 60000 / ((speed * multiplier) + 0.5);
+    return 1000 * ((double)_tileWalkingTime / speed);
 }
 
 void Tile::drawTile(QPoint &pos, double mapZoom, QPainter &painter){

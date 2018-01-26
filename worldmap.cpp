@@ -1,13 +1,23 @@
 #include "worldmap.h"
+
+#include <random>
+#include <time.h>
+
 WorldMap::WorldMap(MainWindow *parent) :
     _parent(parent){
-    QPixmap *first = new QPixmap(":/images/tiles/1.png");
-    QPixmap *second = new QPixmap(":/images/tiles/2.png");
+    srand(time(NULL));
+    QPixmap *firstImage = new QPixmap(":/images/tiles/green.png");
+    QPixmap *secondImage = new QPixmap(":/images/tiles/red.png");
     _theMap.resize(_mapHeight);
     for (int y = 0; y < _mapHeight; y++){
         for (int x = 0; x < _mapWidth; x++){
-            _theMap[x].push_back(new Tile(x, y));
-            _theMap[x][y]->setTileImg(first);
+            int random = rand() % 2;
+            if (random == 0){
+                _theMap[x].push_back(new Tile(x, y, firstImage, 100));
+            }
+            else{
+                _theMap[x].push_back(new Tile(x, y, secondImage, 500));
+            }
         }
     }
     if (_parent->getPlayer()){
@@ -16,8 +26,8 @@ WorldMap::WorldMap(MainWindow *parent) :
     }
     /**/
 
-    first = nullptr;
-    second = nullptr;
+    firstImage = nullptr;
+    secondImage = nullptr;
 
     int sides = 4;
     for (int i = 0; i < sides; i++)

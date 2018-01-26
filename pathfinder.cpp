@@ -123,77 +123,73 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
             clearMemory();
             return direction;
         }
-
-        int gravity = _theMap->getTile(_currNode->_pos)->getTileGarvity(); // vertical / horozontal
+        int gravityMultiplier = 1;
         bool prioVertital = distanceY > distanceX;
         if (prioVertital){
             // North node
-            addNode(me, goalNode, gravity, (_currNode->_pos.x()), (_currNode->_pos.y() - 1), _prio);
+            addNode(me, goalNode, gravityMultiplier, (_currNode->_pos.x()), (_currNode->_pos.y() - 1), _prio);
             if (_childNode){
                 continue;
             }
             // South node
-            addNode(me, goalNode, gravity, (_currNode->_pos.x()), _currNode->_pos.y() + 1, _prio);
+            addNode(me, goalNode, gravityMultiplier, (_currNode->_pos.x()), _currNode->_pos.y() + 1, _prio);
             if (_childNode){
                 continue;
             }
             // West node
-            addNode(me, goalNode, gravity, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
             if (_childNode){
                 continue;
             }
             // East node
-            addNode(me, goalNode, gravity, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
             if (_childNode){
                 continue;
             }
         }
         else{
             // West node
-            addNode(me, goalNode, gravity, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y(), _prio);
             if (_childNode){
                 continue;
             }
             // East node
-            addNode(me, goalNode, gravity, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y(), _prio);
             if (_childNode){
                 continue;
             }
             // North node
-            addNode(me, goalNode, gravity, _currNode->_pos.x(), _currNode->_pos.y() - 1, _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x(), _currNode->_pos.y() - 1, _prio);
             if (_childNode){
                 continue;
             }
             // South node
-            addNode(me, goalNode, gravity, _currNode->_pos.x(), _currNode->_pos.y() + 1, _prio);
+            addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x(), _currNode->_pos.y() + 1, _prio);
             if (_childNode){
                 continue;
             }
         }
-        /*
-    gravity = 30; // diagonal
-    // North west
-    addNode(me, goalNode, gravity,(_currNode->_pos.x() - _drawTileSize) / _drawTileSize, (_currNode->_pos.y() - _drawTileSize) / _drawTileSize, _prio);
-    if (_childNode){
-        continue;
-    }
-    // North East
-    addNode(me, goalNode, gravity,(_currNode->_pos.x() + _drawTileSize) / _drawTileSize, (_currNode->_pos.y() - _drawTileSize) / _drawTileSize, _prio);
-    if (_childNode){
-        continue;
-    }
-    // South west
-    addNode(me, goalNode, gravity,(_currNode->_pos.x() - _drawTileSize) / _drawTileSize, (_currNode->_pos.y() + _drawTileSize) / _drawTileSize, _prio);
-    if (_childNode){
-        continue;
-    }
-    // South east
-    addNode(me, goalNode, gravity,(_currNode->_pos.x() + _drawTileSize) / _drawTileSize, (_currNode->_pos.y() + _drawTileSize) / _drawTileSize, _prio);
-    if (_childNode){
-        continue;
-    }
-    */
-
+        gravityMultiplier = 2;
+        // North west
+        addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y() - 1, _prio);
+        if (_childNode){
+            continue;
+        }
+        // North East
+        addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y() - 1, _prio);
+        if (_childNode){
+            continue;
+        }
+        // South west
+        addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() - 1, _currNode->_pos.y() + 1, _prio);
+        if (_childNode){
+            continue;
+        }
+        // South east
+        addNode(me, goalNode, gravityMultiplier, _currNode->_pos.x() + 1, _currNode->_pos.y() + 1, _prio);
+        if (_childNode){
+            continue;
+        }
         _currNode = nullptr;
         return FacingDirection::continueToNext;
     }
@@ -201,10 +197,11 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
 
 
 
-void PathFinder::addNode(bool *me, Node *goalNode, int gravity, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
+void PathFinder::addNode(bool *me, Node *goalNode, int gravityMultiplier, int x, int y, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
     if (!_theMap->isWalkable(x, y))
         return;
     _childNode = _grid[x][y];
+    int gravity = _theMap->getTile(QPoint(x, y))->getTileGarvity() * gravityMultiplier;
     if (_childNode == nullptr){
         _childNode = new Node(x, y);
         _childNode->calculateNodePos(goalNode, _currNode, gravity);
@@ -268,7 +265,7 @@ FacingDirection PathFinder::getDirection(QPoint &start, QPoint &next){
         }
     }
     else{
-        assert(1 == 2);
+        //assert(1 == 2);
         // Strafe!!! fix!
     }
 }

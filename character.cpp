@@ -53,7 +53,7 @@ void Character::stopMoving(){
 }
 
 FacingDirection Character::findPath(){
-    return _parent->findPath(getEnd(), _target->getEnd());
+    findPath(_target);
 }
 
 FacingDirection Character::findPath(Character *target){
@@ -65,8 +65,15 @@ FacingDirection Character::findPath(QPoint pos){
 }
 
 void Character::follow(Character *target){
-    _target = target;
-    _movement->setFollowing(true);
+    if (_target){
+        _movement->setFollowing(false);
+        _target = nullptr;
+        _movement->stopMoving();
+    }
+    else{
+        _target = target;
+        _movement->setFollowing(true);
+    }
     _movement->follow();
 }
 
