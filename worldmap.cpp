@@ -7,8 +7,8 @@ WorldMap::WorldMap(MainWindow *parent) :
     _parent(parent){
     srand(time(NULL));
     QPixmap *firstImage = new QPixmap(":/images/tiles/1.png");
-    QPixmap *secondImage = new QPixmap(":/images/tiles/1.png");
-    QPixmap *thirdImage = new QPixmap(":/images/tiles/1.png");
+    QPixmap *secondImage = new QPixmap(":/images/tiles/green.png");
+    QPixmap *thirdImage = new QPixmap(":/images/tiles/red.png");
     _theMap.resize(_mapHeight);
     for (int y = 0; y < _mapHeight; y++){
         for (int x = 0; x < _mapWidth; x++){
