@@ -40,11 +40,7 @@ void Movement::changeOffset(int x, int y){
 }
 
 void Movement::meleeAttack(){
-    _character->meleeAttack();
-    int nextAttack = 2000;
-    if (_msPerSquare > 2000)
-        nextAttack = _msPerSquare;
-    _followTimer->start(nextAttack);
+    _character->withinMelee();
     _runExhausted = true;
 }
 
@@ -60,7 +56,6 @@ void Movement::follow(){
         else if (_character->distanceToEnemy() == 0){ // Still in melee distance
             if (_character->targetIsHostile())
                 meleeAttack();
-            _state = State::none;
             return;
         }
 

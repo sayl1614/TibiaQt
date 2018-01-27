@@ -42,6 +42,7 @@ public:
 
     void setState(State state){_state = state;}
     void setFollowing(bool value){_isFollowing = value;}
+    void setFollowTimer(int value){_followTimer->start(value);}
 
     int movementWonderAround();
 

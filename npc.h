@@ -13,13 +13,15 @@ public:
     void noPath(bool tooFarAway = false);
 
     void attack(Character *enemy);
+    void withinMelee();
 
     ~NPC();
 protected:
+    void faceEnemy();
 
 protected slots:
     virtual bool moveTwardsEnemy();
-    void meleeAttack();
+    virtual void meleeAttack();
 };
 
 #endif // ENEMY_H

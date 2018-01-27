@@ -10,6 +10,10 @@ void Player::attack(Character *enemy){
 
 }
 
+void Player::withinMelee(){
+
+}
+
 void Player::meleeAttack(){
 
 }

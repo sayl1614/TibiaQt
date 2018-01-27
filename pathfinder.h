@@ -76,8 +76,6 @@ public:
         void calculateNodePos(Node *endNode, Node *currNode, int gravity){
             this->_parentNode = currNode;
 
-            gravity /= 100;
-
             int distanceX = (abs(_pos.x() - endNode->_pos.x()));
             distanceX += distanceX > 0 ? - 1 : 0;
             int distanceY = (abs(_pos.y() - endNode->_pos.y()));
@@ -97,7 +95,8 @@ public:
             _h = totalGravity;
             /**/
 
-            _h = distanceX + distanceY;
+            int tileSize = 100;
+            _h = (distanceX + distanceY) * tileSize;
             _g = gravity  + currNode->_g;
             _f = _g + _h;
         }
@@ -127,8 +126,6 @@ public:
     QVector<Node*> _finalPath;
 
     QVector < QVector <Node*> > _grid;
-
-
 
     bool _from = true;
     bool _to = true;

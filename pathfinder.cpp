@@ -70,9 +70,10 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
 }
 
 void PathFinder::initialStage(Node *startNode, Node *endNode, std::priority_queue<Node*, std::vector<Node*>, Prio> &_prio){
+    int tileSize = 100;
     _currNode = new Node(startNode->_pos);
     double tileGravity = _theMap->getTile(_currNode->_pos)->getTileGarvity();
-    _currNode->_g = -1;
+    _currNode->_g = tileSize;
 
     _currNode->calculateNodePos(endNode, _currNode, tileGravity);
     _adjacent = _currNode;

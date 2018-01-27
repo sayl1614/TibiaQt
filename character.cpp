@@ -9,6 +9,10 @@ Character::Character(QString character, MainWindow *parent, int speed) :
     _movement = new Movement(this);
     _movement->setSpeed(speed);
 
+    _meleeTimer = new QTimer(this);
+    connect(_meleeTimer, SIGNAL(timeout()), this, SLOT(meleeAttack()));
+    _timeSinceLastAttack.start();
+
     init(character);
 }
 

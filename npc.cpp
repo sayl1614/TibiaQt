@@ -29,12 +29,30 @@ void NPC::attack(Character *enemy){
     _isHostile = true;
 }
 
-void NPC::meleeAttack(){
+void NPC::faceEnemy(){
+    if (this->getEnd().x() < _target->getEnd().x()) {       // west of target
+        face(FacingDirection::east);
+    }
+    else if (this->getEnd().x() > _target->getEnd().x()) {  // east of target
+        face(FacingDirection::west);
+    }
+    else if (this->getEnd().y() < _target->getEnd().y()) {  // north of target
+        face(FacingDirection::south);
+    }
+    else if (this->getEnd().y() > _target->getEnd().y()) {  // south of target
+        face(FacingDirection::north);
+    }
+}
+
+void NPC::withinMelee(){
     //setBox_BlackOn();
     // Do an attack inbetween
-
+    if (!_meleeTimer->isActive())
+        meleeAttack();
     // Do an attack inbetween
 
+
+    // ok to remove?
     if (isMoving())
         return;
 
@@ -61,14 +79,6 @@ void NPC::meleeAttack(){
                 else
                     move(FacingDirection::south);
             }
-            if (!isMoving()) {    // failed
-                face(FacingDirection::east);
-            }
-        }
-        else { // Just turn twards enemy
-            if (!isMoving()){
-                face(FacingDirection::east);
-            }
         }
     }
 
@@ -93,15 +103,6 @@ void NPC::meleeAttack(){
                 else
                     move(FacingDirection::south);
             }
-
-            if (!isMoving()) {    // failed
-                face(FacingDirection::west);
-            }
-        }
-        else { // Just turn twards enemy
-            if (!isMoving()){
-                face(FacingDirection::west);
-            }
         }
     }
     else if (this->getEnd().y() < _target->getEnd().y()) {         // north of target
@@ -111,14 +112,7 @@ void NPC::meleeAttack(){
                 move(FacingDirection::west);
             else
                 move(FacingDirection::east);
-            if (!isMoving()) {    // failed
-                face(FacingDirection::south);
-            }
-        }
-        else { // Just turn twards enemy
-            if (!isMoving()){
-                face(FacingDirection::south);
-            }
+
         }
     }
     else if (this->getEnd().y() > _target->getEnd().y()) {          // south of target                                                          // south of target
@@ -128,14 +122,6 @@ void NPC::meleeAttack(){
                 move(FacingDirection::west);
             else
                 move(FacingDirection::east);
-            if (!isMoving()) {    // failed
-                face(FacingDirection::north);
-            }
-        }
-        else { // Just turn twards enemy
-            if (!isMoving()){
-                face(FacingDirection::north);
-            }
         }
     }
     else {                                                          // ontop of target
@@ -145,7 +131,6 @@ void NPC::meleeAttack(){
             move(direction);
         }
     }
-    //_followTimer->start(2000);
 }
 
 
@@ -168,21 +153,20 @@ void Npc::draw(int x, int y, QPainter &painter){
                         _drawCharacterSize, _drawCharacterSize, this->_movementImages[movement._animationIndex]);
 }
 
-void NPC::attack(Character *enemy){
-    if (!_enemy){
-        _enemy = enemy;
-        _followTimer->start(0);
-    }
-    else{
-        _enemy = nullptr;
-        _followTimer->stop();
-    }
-}
-
-
-
-
 */
 bool NPC::moveTwardsEnemy(){
 
+}
+
+#include <QDebug>
+void NPC::meleeAttack(){
+    if (distanceToEnemy() > 0){
+        _meleeTimer->stop();
+        return;
+    }
+    _meleeTimer->start(2000);
+    _movement->setFollowTimer(2000);
+    //attack
+    if (!isMoving())
+        faceEnemy();
 }

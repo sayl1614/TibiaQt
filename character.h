@@ -9,6 +9,10 @@
 #include <QPoint>
 #include <QVector>
 
+
+#include <QTimer>
+#include <QElapsedTimer>
+
 class MainWindow;
 
 
@@ -51,7 +55,7 @@ public:
     bool hasTarget(){return (bool)_target;}
     bool targetIsHostile(){return _isHostile;}
     Character *getTarget(){return _target;}
-    virtual void meleeAttack() = 0;
+    virtual void withinMelee() = 0;
 
     virtual void playAnimation(int _msPerSquare);
     virtual void stopAnimation();
@@ -72,7 +76,7 @@ public:
     }
     void toggleFollow();
 protected slots:
-
+    virtual void meleeAttack() = 0;
 protected:
     QString _charName;
 
@@ -85,6 +89,9 @@ protected:
     QVector<Image*> _moveAnimation;
     FacingDirection _direction {FacingDirection::south};
     Movement *_movement;
+
+    QTimer *_meleeTimer;
+    QElapsedTimer _timeSinceLastAttack;
 
     int _drawOffset;
 };
