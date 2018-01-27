@@ -20,8 +20,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     _enemy = new NPC("demon", this, nullptr, 150);
     _theMap->addCharacter(_enemy);
 
-    for (int i = 0; i < 20; i++){
-        _theMap->addCharacter(new NPC("demon", this, _player));
+    for (int i = 0; i < 2; i++){
+        Character *anEnemy = new NPC("demon", this, _player);
+        anEnemy->follow(_player);
+        _theMap->addCharacter(anEnemy);
     }
 }
 

@@ -35,7 +35,8 @@ SOURCES += \
     image.cpp \
     movement.cpp \
     gui.cpp \
-    npc.cpp
+    npc.cpp \
+    healthbar.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -48,7 +49,8 @@ HEADERS += \
     image.h \
     movement.h \
     gui.h \
-    npc.h
+    npc.h \
+    healthbar.h
 
 RESOURCES += \
     images.qrc

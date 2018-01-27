@@ -63,7 +63,8 @@ FacingDirection PathFinder::pathfinderBiDirectional(QPoint begin, QPoint end, bo
         direction = findClosestPath(&_from, _endNode, _prioFirst, debugMode); // Primary search
         if (direction != FacingDirection::continueToNext)
             return direction;
-            direction = findClosestPath(&_to, _startNode, _prioEnd, debugMode); // Secondary search
+        if (findClosestPath(&_to, _startNode, _prioEnd, debugMode) == FacingDirection::notFound) // Secondary search
+            return FacingDirection::notFound;
         if (debugMode)
             break;
     }
@@ -85,11 +86,14 @@ FacingDirection PathFinder::findClosestPath(bool *me, Node *goalNode,  std::prio
     while(true){
         if (_prio.empty()){
             if (_currNode->_foundPath){
-                if (me == &_to)
+                if (me == &_to){
                     return FacingDirection::continueToNext;
+                }
             }
-            else
+            else{
+                clearMemory();
                 return FacingDirection::notFound;
+            }
         }
         while (_prio.size()){
             if (_currNode->_foundPath)

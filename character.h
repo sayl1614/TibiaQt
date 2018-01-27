@@ -9,9 +9,10 @@
 #include <QPoint>
 #include <QVector>
 
-
 #include <QTimer>
 #include <QElapsedTimer>
+
+#include "healthbar.h"
 
 class MainWindow;
 
@@ -56,6 +57,7 @@ public:
     bool targetIsHostile(){return _isHostile;}
     Character *getTarget(){return _target;}
     virtual void withinMelee() = 0;
+    void drawBlood(){_currHp -= 10;}
 
     virtual void playAnimation(int _msPerSquare);
     virtual void stopAnimation();
@@ -77,6 +79,7 @@ public:
     void toggleFollow();
 protected slots:
     virtual void meleeAttack() = 0;
+    virtual void removeBlackBox(){}
 protected:
     QString _charName;
 
@@ -92,6 +95,11 @@ protected:
 
     QTimer *_meleeTimer;
     QElapsedTimer _timeSinceLastAttack;
+
+
+    int _currHp = 250;
+    int _maxHp = 250;
+    Healthbar _hpBar {_currHp, _maxHp};
 
     int _drawOffset;
 };

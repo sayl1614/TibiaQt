@@ -4,6 +4,7 @@
 
 Player::Player(QString character, MainWindow *parent, int speed) :
     Character(character, parent, speed){
+    _currHp = 200;
 }
 
 void Player::attack(Character *enemy){
@@ -32,8 +33,13 @@ void Player::noPath(bool tooFarAway){
 
 void Player::draw(int x, int y, QPainter &painter){
     double mapZoom = _parent->dimentions.getMapZoom();
-    _moveAnimation[(int)_direction]->draw(x - (_drawOffset * mapZoom) + _movement->getOffset().x(),
-                                          y - (_drawOffset * mapZoom) + _movement->getOffset().y(),
+    int drawX = x - (_drawOffset * mapZoom) + _movement->getOffset().x();
+    int drawY = y - (_drawOffset * mapZoom) + _movement->getOffset().y();
+
+    _hpBar.draw(drawX + ((_drawOffset / 3) * mapZoom), drawY - 20, painter, mapZoom);
+
+    _moveAnimation[(int)_direction]->draw(drawX,
+                                          drawY,
                                           mapZoom, painter);
 }
 

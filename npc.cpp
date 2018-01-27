@@ -2,19 +2,37 @@
 #include "mainwindow.h"
 
 
+#include <QPen>
+#include <QBrush>
+
+#include <QDebug>
+
+
 NPC::NPC(QString character, MainWindow *parent, Character *enemy, int speed) :
     Character(character, parent, speed){
+
+    _drawBox_BlackTimer = new QTimer(this);
+    connect(_drawBox_BlackTimer, SIGNAL(timeout()), this, SLOT(removeBlackBox()));
+
     _target = enemy;
     if (_target){
         _movement->setFollowing(true);
+        follow();
     }
 }
 
 void NPC::draw(int x, int y, QPainter &painter){
     double mapZoom = _parent->dimentions.getMapZoom();
-    _moveAnimation[(int)_direction]->draw(x - (_drawOffset * mapZoom)  + _movement->getOffset().x(),
-                                          y - (_drawOffset * mapZoom)  + _movement->getOffset().y(),
-                                          mapZoom, painter);
+    int drawX = x - (_drawOffset * mapZoom)  + _movement->getOffset().x();
+    int drawY = y - (_drawOffset * mapZoom)  + _movement->getOffset().y();
+
+
+    _hpBar.draw(drawX + ((_drawOffset / 3) * mapZoom), drawY - 20, painter, mapZoom);
+
+    if (_hasBox_Black)
+        drawBox_Black(x, y, painter, 0);
+
+    _moveAnimation[(int)_direction]->draw(drawX, drawY, mapZoom, painter);
 }
 
 void NPC::noPath(bool tooFarAway){
@@ -42,6 +60,24 @@ void NPC::faceEnemy(){
     else if (this->getEnd().y() > _target->getEnd().y()) {  // south of target
         face(FacingDirection::north);
     }
+}
+
+void NPC::removeBlackBox(){
+    _hasBox_Black = false;
+}
+
+void NPC::drawBox_Black(int x, int y, QPainter &painter, int offset){
+    double mapZoom = _parent->dimentions.getMapZoom();
+
+    QPen pen;
+    pen.setWidth(7 * mapZoom);
+
+    painter.setPen(pen);
+
+    painter.drawRect(x + _movement->getOffset().x(),
+                     y + _movement->getOffset().y(),
+                     _parent->dimentions.getDrawTileSize(), _parent->dimentions.getDrawTileSize());
+
 }
 
 void NPC::withinMelee(){
@@ -134,31 +170,10 @@ void NPC::withinMelee(){
 }
 
 
-
-
-NPC::~NPC(){
-
-}
-
-
-/*
-void Npc::draw(int x, int y, QPainter &painter){
-    animationUpdate();
-    setAnimationAttributes();
-    if (_hasBox_Black)
-        drawBox_Black(x - _drawOffset + movement.getOffsetX(), y - _drawOffset + movement.getOffsetY(), painter, 0);
-
-    painter.drawPixmap( x - _drawOffset + movement.getOffsetX(),
-                        y - _drawOffset + movement.getOffsetY(),
-                        _drawCharacterSize, _drawCharacterSize, this->_movementImages[movement._animationIndex]);
-}
-
-*/
 bool NPC::moveTwardsEnemy(){
 
 }
 
-#include <QDebug>
 void NPC::meleeAttack(){
     if (distanceToEnemy() > 0){
         _meleeTimer->stop();
@@ -167,6 +182,15 @@ void NPC::meleeAttack(){
     _meleeTimer->start(2000);
     _movement->setFollowTimer(2000);
     //attack
-    if (!isMoving())
+    if (!isMoving()){
         faceEnemy();
+    }
+    _hasBox_Black = true;
+    _drawBox_BlackTimer->start(1000);
+    _target->drawBlood();
+}
+
+
+NPC::~NPC(){
+
 }
