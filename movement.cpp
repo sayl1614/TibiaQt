@@ -241,7 +241,8 @@ int Movement::movementWonderAround(){
     FacingDirection direction = (FacingDirection)(rand() % 4);
     move(direction);
     if (isMoving())
-        _followTimer->start(_msPerSquare * 3);
+        _followTimer->start(_msPerSquare + 1000);
     else
-        _followTimer->start(_msPerSquare + 25);
+        _followTimer->start(500);
+    return 0;
 }

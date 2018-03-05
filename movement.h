@@ -47,7 +47,7 @@ public:
     int movementWonderAround();
 
     int getSpeed(){return _speed;}
-    int setSpeed(int speed){_speed = speed;}
+    void setSpeed(int speed){_speed = speed;}
 
 
     void move(FacingDirection direction);

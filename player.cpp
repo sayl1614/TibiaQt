@@ -4,7 +4,8 @@
 
 Player::Player(QString character, MainWindow *parent, int speed) :
     Character(character, parent, speed){
-    _currHp = 200;
+    _currHp = 2500;
+    _maxHp = 2500;
 }
 
 void Player::attack(Character *enemy){

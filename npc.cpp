@@ -171,7 +171,7 @@ void NPC::withinMelee(){
 
 
 bool NPC::moveTwardsEnemy(){
-
+    return false;
 }
 
 void NPC::meleeAttack(){

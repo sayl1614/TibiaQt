@@ -57,7 +57,7 @@ void Character::stopMoving(){
 }
 
 FacingDirection Character::findPath(){
-    findPath(_target);
+    return findPath(_target);
 }
 
 FacingDirection Character::findPath(Character *target){
