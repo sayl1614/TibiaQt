@@ -14,9 +14,9 @@ WorldMap::WorldMap(MainWindow *parent) :
         for (int x = 0; x < _mapWidth; x++){
             int randoms = rand() % 3;
             if (randoms == 0)
-                _theMap[x].push_back(new Tile(x, y, firstImage, 100));
+                _theMap[x].push_back(new Tile(x, y, secondImage, 100));
             else if (randoms == 1)
-                _theMap[x].push_back(new Tile(x, y, secondImage, 300));
+                _theMap[x].push_back(new Tile(x, y, firstImage, 300));
             else
                 _theMap[x].push_back(new Tile(x, y, thirdImage, 500));
         }

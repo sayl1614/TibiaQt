@@ -1,7 +1,11 @@
 #include "mainwindow.h"
 
+#include <QDateTime>
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     dimentions.setDrawTileSize(dimentions.getOrgTileSize()* dimentions.getMapZoom());
+
+    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
 
     this->_FPSTimer = new QTimer(this);
     connect(this->_FPSTimer, SIGNAL(timeout()), this, SLOT(update()));
@@ -9,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->_keyPressElapsedTimer.start();
 
 
-    _player = new Player("demon", this);
+    _player = new Player("demon", this, 600);
     _screenPos = &_screenCenter;
     followWithCamera(_player);
 
@@ -17,11 +21,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->_pathfinder = new PathFinder(this, _theMap);
     _GUI = new GUI(this, _theMap->getMap());
 
-    _enemy = new NPC("demon", this, nullptr, 150);
-    _theMap->addCharacter(_enemy);
+    // Adds an enemy controlled by "F" button
+    //_enemy = new NPC("demon", this, nullptr, 150);
+    //_theMap->addCharacter(_enemy);
 
-    for (int i = 0; i < 10; i++){
-        Character *anEnemy = new NPC("demon", this, _player);
+    for (int i = 0; i < 16; i++){
+        Character *anEnemy = nullptr;
+        int either = qrand() % 2;
+        if (either) {
+            int speed = 400;
+            anEnemy = new NPC("demon", this, _player, speed);
+        }
+        else {
+            int speed = 200;
+            anEnemy = new NPC("the handmaiden", this, _player, speed);
+        }
         anEnemy->follow(_player);
         _theMap->addCharacter(anEnemy);
     }

@@ -185,6 +185,7 @@ void NPC::meleeAttack(){
     if (!isMoving()){
         faceEnemy();
     }
+    _movement->meleeAttack();
     _hasBox_Black = true;
     _drawBox_BlackTimer->start(1000);
     _target->drawBlood();

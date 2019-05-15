@@ -82,6 +82,7 @@ void Character::follow(Character *target){
 }
 
 int Character::distanceToEnemy(){
+    // makes it crash sometimes...
     int distanceX = (abs(getEnd().x() - _target->getEnd().x()));
     int distanceY = (abs(getEnd().y() - _target->getEnd().y()));
 

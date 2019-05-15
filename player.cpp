@@ -4,7 +4,7 @@
 
 Player::Player(QString character, MainWindow *parent, int speed) :
     Character(character, parent, speed){
-    _currHp = 2500;
+    _currHp = 2300;
     _maxHp = 2500;
 }
 
